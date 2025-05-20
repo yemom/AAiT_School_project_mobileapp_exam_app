@@ -2,7 +2,6 @@ import 'package:another_exam_app/firebase_options.dart';
 import 'package:another_exam_app/theme/theme.dart';
 import 'package:another_exam_app/views/admin/admin_home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
