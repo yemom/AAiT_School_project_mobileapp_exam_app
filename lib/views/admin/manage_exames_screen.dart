@@ -107,6 +107,7 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppTheme.backgroundColor,
         title: _buildAppBarTitle(),
         actions: [
           IconButton(

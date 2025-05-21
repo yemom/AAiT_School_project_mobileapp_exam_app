@@ -1,8 +1,10 @@
 import 'package:another_exam_app/model/category.dart';
 import 'package:another_exam_app/theme/theme.dart';
+import 'package:another_exam_app/views/admin/add_exam_screen.dart';
 import 'package:another_exam_app/views/admin/manage_exames_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:another_exam_app/views/admin/add_category_screen.dart';
 
 class ManageCategoriesScreen extends StatefulWidget {
   const ManageCategoriesScreen({super.key});
@@ -17,6 +19,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppTheme.backgroundColor,
         title: const Text(
           "Manage Categories",
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -29,11 +32,12 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
             ),
             onPressed: () {
               // Navigation to AddCategoryScreen - will uncomment and fix later
-              /* Navigator.push(
+              Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => const AddCategoryScreen(),
-                ),*/
+                ),
+              );
             },
           ),
         ],
@@ -75,8 +79,12 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                   const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: () {
-                      // TODO: Implement navigation to AddCategoryScreen
-                      // Navigator.push(context, MaterialPageRoute(builder: (context) => AddExamScreen()),);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddCategoryScreen(),
+                        ),
+                      );
                     },
                     child: const Text("Add Category"),
                   ),
@@ -179,9 +187,12 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     Category category,
   ) async {
     if (action == "Edit") {
-      // Changed action to match PopupMenuItem value
-      // Navigation to Edit Category Screen - uncomment and fix later
-      // Navigator.push(context, MaterialPageRoute(builder: (context) => AddExamScreen(Category: category),),);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AddCategoryScreen(category: category),
+        ),
+      );
     } else if (action == "Delete") {
       final confirm = await showDialog<bool>(
         context: context,
