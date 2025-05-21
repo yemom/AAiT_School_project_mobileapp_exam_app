@@ -39,6 +39,7 @@ dependencies:
   cloud_firestore: ^5.6.7
   flutter_animate: ^4.5.2
   percent_indicator: ^4.2.5
+  retry: ^3.1.1
 
 dev_dependencies:
   flutter_test:

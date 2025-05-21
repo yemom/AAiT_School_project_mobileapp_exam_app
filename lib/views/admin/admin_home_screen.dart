@@ -1,4 +1,6 @@
 import 'package:another_exam_app/theme/theme.dart';
+import 'package:another_exam_app/views/admin/manage_categories_screen.dart';
+import 'package:another_exam_app/views/admin/manage_exames_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -88,6 +90,40 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               style: TextStyle(fontSize: 14, color: AppTheme.textScondaryColor),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavigationCard(String title, IconData icon, VoidCallback onTap) {
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppTheme.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: AppTheme.primaryColor, size: 25),
+              ),
+              SizedBox(height: 16),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.textPrimaryColor,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -319,25 +355,18 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            examData['name']
-                                                as String, // Assuming 'name' key for exam title
+                                            examData['title'],
                                             style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
+                                              fontWeight: FontWeight.bold,
                                               color: AppTheme.textPrimaryColor,
                                             ),
-                                            overflow: TextOverflow.ellipsis,
                                           ),
                                           SizedBox(height: 4),
                                           Text(
-                                            _formatData(
-                                              (examData['createdAt']
-                                                      as Timestamp)
-                                                  .toDate(),
-                                            ),
+                                            'Created on ${_formatData(examData['createdAt'].toDate())}',
                                             style: TextStyle(
-                                              fontSize: 14,
                                               color: AppTheme.textScondaryColor,
+                                              fontSize: 12,
                                             ),
                                           ),
                                         ],
@@ -347,6 +376,73 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                 ),
                               );
                             },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.speed_rounded,
+                                color: AppTheme.primaryColor,
+                                size: 24,
+                              ),
+                              SizedBox(width: 12),
+                              Text(
+                                'Exam Action',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.textPrimaryColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                          GridView.count(
+                            crossAxisCount: 2,
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            mainAxisSpacing: 16,
+                            childAspectRatio: 0.9,
+                            crossAxisSpacing: 16,
+                            children: [
+                              _buildNavigationCard(
+                                'Manage Exames',
+                                Icons
+                                    .assignment_turned_in_rounded, // Corrected icon
+                                () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => ManageExamesScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                              _buildNavigationCard(
+                                'Manage Categories',
+                                Icons
+                                    .category_rounded, // Using a category icon for managing categories
+                                () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => ManageCategoriesScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),
