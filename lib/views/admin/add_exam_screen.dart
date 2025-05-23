@@ -227,9 +227,144 @@ class _AddExamScreenState extends State<AddExamScreen> {
                             _selectedCategoryId = value;
                           });
                         },
+                        validator: (value) {
+                          value == null ? "Please select a category" : null;
+                        },
                       );
                     },
                   ),
+                SizedBox(height: 20),
+                TextFormField(
+                  controller: _timeLimitCOntroller,
+                  decoration: InputDecoration(
+                    labelText: "Time Limit (in minutes)",
+                    hintText: "Enter time limit",
+                    prefixIcon: Icon(Icons.timer, color: AppTheme.primaryColor),
+                  ),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter time limit";
+                    }
+                    final number = int.tryParse(value);
+                    if (number == null || number <= 0) {
+                      return "Please enter a valid time limit";
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Questions",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.textPrimaryColor,
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: _addQuestion,
+                          label: Text("Add Question"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primaryColor,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 16),
+                    ..._questionItems.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final QuestionFormItem question = entry.value;
+
+                      return Card(
+                        margin: EdgeInsets.only(bottom: 16),
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Question ${index + 1}",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppTheme.primaryColor,
+                                    ),
+                                  ),
+                                  if (_questionItems.length > 1)
+                                    IconButton(
+                                      onPressed: () {
+                                        _removeQuestion(index);
+                                      },
+                                      icon: Icon(
+                                        Icons.delete,
+                                        color: Colors.redAccent,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              SizedBox(height: 16),
+
+                              TextFormField(
+                                controller: question.questionController,
+                                decoration: InputDecoration(
+                                  labelText: "Question Title",
+                                  hintText: "Enter question",
+                                  prefixIcon: Icon(
+                                    Icons.question_answer,
+                                    color: AppTheme.primaryColor,
+                                  ),
+                                ),
+
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Please enter question";
+                                  }
+                                  return null;
+                                },
+                              ),
+                              SizedBox(height: 16),
+                              ...question.optionController.asMap().entries.map((
+                                entry,
+                              ) {
+                                final optionIndex = entry.key;
+                                final controller = entry.value;
+
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 8),
+                                  child: Row(
+                                    children: [
+                                      Radio<int>(
+                                        value: optionIndex,
+                                        groupValue: question.correctOptionIndex,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            question.correctOptionIndex =
+                                                value!;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+                  ],
+                ),
               ],
             ),
           ],
