@@ -12,7 +12,10 @@ class Question {
   factory Question.fromMap(Map<String, dynamic> map) {
     return Question(
       text: map['text'] ?? "",
-      options: List<String>.from(map['options'] ?? []),
+      options:
+          (map['options'] as List<dynamic>? ?? [])
+              .map((e) => e.toString())
+              .toList(),
       correctOptionIndex: map['correctOptionIndex'] ?? 0,
     );
   }

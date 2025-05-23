@@ -1,6 +1,5 @@
 import 'package:another_exam_app/model/category.dart';
 import 'package:another_exam_app/theme/theme.dart';
-import 'package:another_exam_app/views/admin/add_exam_screen.dart';
 import 'package:another_exam_app/views/admin/manage_exames_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

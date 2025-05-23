@@ -36,9 +36,11 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 .where('categoryId', isEqualTo: category.id)
                 .count()
                 .get();
+        final categoryName = category.data()['name'];
+        final examCountValue = exameCount.count;
         return {
-          'name': category.data()['name'] as String,
-          'count': exameCount.count,
+          'name': categoryName is String ? categoryName : "Unknown Category",
+          'count': examCountValue is int ? examCountValue : 0,
         };
       }),
     );
@@ -232,7 +234,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               final totalExames = stats['categoryData']
                                   .fold<int>(
                                     0,
-                                    (sum, item) => sum + (item['count'] as int),
+                                    (int sum, Map<String, dynamic> item) =>
+                                        sum + ((item['count'] as int?) ?? 0),
                                   );
                               final percentage =
                                   totalExames > 0

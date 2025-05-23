@@ -112,10 +112,25 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AddExamScreen()),
-              );
+              if (_selectedCategoryId == null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Please select a category to add an exam."),
+                  ),
+                );
+              } else {
+                final selectedCategory = _categories.firstWhere(
+                  (category) => category.id == _selectedCategoryId,
+                );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder:
+                        (context) =>
+                            AddExamScreen(categoryId: widget.categoryId),
+                  ),
+                );
+              }
             },
             icon: const Icon(
               Icons.add_circle_outline,
@@ -222,12 +237,29 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                         const SizedBox(height: 8),
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AddExamScreen(),
-                              ),
-                            );
+                            if (_selectedCategoryId == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    "Please select a category to add an exam.",
+                                  ),
+                                ),
+                              );
+                            } else {
+                              final selectedCategory = _categories.firstWhere(
+                                (category) =>
+                                    category.id == _selectedCategoryId,
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => AddExamScreen(
+                                        categoryId: widget.categoryId,
+                                      ),
+                                ),
+                              );
+                            }
                           },
                           child: const Text("Add Exam"),
                         ),
@@ -272,12 +304,29 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                         const SizedBox(height: 8),
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AddExamScreen(),
-                              ),
-                            );
+                            if (_selectedCategoryId == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    "Please select a category to add an exam.",
+                                  ),
+                                ),
+                              );
+                            } else {
+                              final selectedCategory = _categories.firstWhere(
+                                (category) =>
+                                    category.id == _selectedCategoryId,
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => AddExamScreen(
+                                        categoryId: widget.categoryId,
+                                      ),
+                                ),
+                              );
+                            }
                           },
                           child: const Text("Add Exam"),
                         ),
