@@ -1,6 +1,6 @@
 # another_exam_app
 
-A new Flutter project.
+A new android school final project 
 
 ## Getting Started
 
