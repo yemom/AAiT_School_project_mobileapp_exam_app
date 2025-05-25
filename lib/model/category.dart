@@ -1,0 +1,40 @@
+class Category {
+  final String id;
+  final String name;
+  final String description;
+  final DateTime? createdAt; // Made createdAt nullable
+
+  Category({
+    required this.id,
+    required this.name,
+    required this.description,
+    this.createdAt, // Made createdAt optional and nullable
+  });
+
+  factory Category.fromMap(String id, Map<String, dynamic> map) {
+    return Category(
+      id: id,
+      name: map['name'] ?? "",
+      description: map['description'] ?? "",
+      createdAt: map['createdAt']?.toDate(),
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'name': name,
+      'description': description,
+      'createdAt':
+          createdAt, // Assuming createdAt cannot be null after fetching from map
+    };
+  }
+
+  Category copyWith({String? name, String? description}) {
+    return Category(
+      id: id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      createdAt: createdAt,
+    );
+  }
+}
