@@ -10,11 +10,11 @@ class AddExamScreen extends StatefulWidget {
   final String? examId;
   final VoidCallback? onExamAdded;
   const AddExamScreen({
-    Key? key,
+    super.key,
     required this.categoryId,
     this.examId,
     this.onExamAdded,
-  }) : super(key: key);
+  });
 
   @override
   State<AddExamScreen> createState() => _AddExamScreenState();
@@ -214,7 +214,7 @@ class _AddExamScreenState extends State<AddExamScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.examId == null ? 'Add Exam' : 'Edit Exam',
+          widget.examId == null ? "Add ${widget.examId} Exam" : 'Edit Exam',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),

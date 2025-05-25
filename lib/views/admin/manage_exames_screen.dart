@@ -9,8 +9,7 @@ import 'package:retry/retry.dart';
 class ManageExamesScreen extends StatefulWidget {
   final String? categoryId;
   final VoidCallback? onExamAdded;
-  const ManageExamesScreen({Key? key, this.categoryId, this.onExamAdded})
-    : super(key: key);
+  const ManageExamesScreen({super.key, this.categoryId, this.onExamAdded});
 
   @override
   State<ManageExamesScreen> createState() => _ManageExamesScreenState();
@@ -74,35 +73,31 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
 
     String? filterCategoryId = _selectedCategoryId ?? widget.categoryId;
 
-    if (filterCategoryId != null) {
-      query = query.where("category", isEqualTo: filterCategoryId);
-    }
+    query = query.where("category", isEqualTo: filterCategoryId);
 
     return query.snapshots();
   }
 
   Widget _buildAppBarTitle() {
     String? selectedCategoryId = _selectedCategoryId ?? widget.categoryId;
-    if (selectedCategoryId == null) {
-      return const Text(
-        "All Exames",
-        style: TextStyle(fontWeight: FontWeight.bold),
-      );
-    } else {
-      final selectedCategory = _categories.firstWhere(
-        (category) => category.id == selectedCategoryId,
-        orElse:
-            () => Category(
-              id: selectedCategoryId,
-              name: "Unknown Category",
-              description: '',
-            ),
-      );
-      return Text(
-        "Exams in ${selectedCategory.name}",
-        style: const TextStyle(fontWeight: FontWeight.bold),
-      );
-    }
+    final selectedCategory = _categories.firstWhere(
+      (category) => category.id == selectedCategoryId,
+      orElse:
+          () => Category(
+            id:
+                selectedCategoryId ??
+                'unknown_category_id', // Handle nullable ID
+            name:
+                selectedCategoryId == null
+                    ? "Unknown Category"
+                    : "Unknown", // Adjust name based on nullability
+            description: '',
+          ),
+    );
+    return Text(
+      "Exams in ${selectedCategory.name}",
+      style: const TextStyle(fontWeight: FontWeight.bold),
+    );
   }
 
   @override
@@ -121,15 +116,13 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                   ),
                 );
               } else {
-                final selectedCategory = _categories.firstWhere(
-                  (category) => category.id == _selectedCategoryId,
-                );
+                // Removed unused variable selectedCategory
                 Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder:
                         (context) => AddExamScreen(
-                          categoryId: widget.categoryId,
+                          categoryId: _selectedCategoryId!,
                           onExamAdded: widget.onExamAdded,
                         ),
                   ),
@@ -250,16 +243,13 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                                 ),
                               );
                             } else {
-                              final selectedCategory = _categories.firstWhere(
-                                (category) =>
-                                    category.id == _selectedCategoryId,
-                              );
+                              // Removed unused variable selectedCategory
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder:
                                       (context) => AddExamScreen(
-                                        categoryId: widget.categoryId,
+                                        categoryId: _selectedCategoryId!,
                                         onExamAdded: widget.onExamAdded,
                                       ),
                                 ),
@@ -322,12 +312,13 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                                 (category) =>
                                     category.id == _selectedCategoryId,
                               );
+                              // Removed unused variable selectedCategory
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder:
                                       (context) => AddExamScreen(
-                                        categoryId: widget.categoryId,
+                                        categoryId: _selectedCategoryId!,
                                         onExamAdded: widget.onExamAdded,
                                       ),
                                 ),
