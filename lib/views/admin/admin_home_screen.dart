@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class AdminHomeScreen extends StatefulWidget {
-  const AdminHomeScreen({super.key});
+  const AdminHomeScreen({Key? key}) : super(key: key);
 
   @override
   State<AdminHomeScreen> createState() => _AdminHomeScreenState();
@@ -13,6 +13,10 @@ class AdminHomeScreen extends StatefulWidget {
 
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  void _refreshData() {
+    setState(() {});
+  }
 
   Future<Map<String, dynamic>> _ftechStatistics() async {
     final categoriesCount =
@@ -33,13 +37,15 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         final exameCount =
             await _firestore
                 .collection('exames')
-                .where('categoryId', isEqualTo: category.id)
+                .where('category', isEqualTo: category.id)
                 .count()
                 .get();
-        final categoryName = category.data()['name'];
+        final categoryName =
+            (category.data() as Map<String, dynamic>?)?['name'] as String? ??
+            'Unknown Category';
         final examCountValue = exameCount.count;
         return {
-          'name': categoryName is String ? categoryName : "Unknown Category",
+          'name': categoryName,
           'count': examCountValue is int ? examCountValue : 0,
         };
       }),
@@ -142,7 +148,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         ),
         elevation: 0,
       ),
-      body: FutureBuilder(
+      body: FutureBuilder<Map<String, dynamic>>(
         future: _ftechStatistics(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -426,7 +432,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder:
-                                          (context) => ManageExamesScreen(),
+                                          (context) => ManageExamesScreen(
+                                            onExamAdded: _refreshData,
+                                          ),
                                     ),
                                   );
                                 },

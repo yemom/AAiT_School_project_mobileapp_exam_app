@@ -7,7 +7,14 @@ import 'package:flutter/material.dart';
 
 class AddExamScreen extends StatefulWidget {
   final String? categoryId;
-  const AddExamScreen({super.key, required this.categoryId});
+  final String? examId;
+  final VoidCallback? onExamAdded;
+  const AddExamScreen({
+    Key? key,
+    required this.categoryId,
+    this.examId,
+    this.onExamAdded,
+  }) : super(key: key);
 
   @override
   State<AddExamScreen> createState() => _AddExamScreenState();
@@ -26,30 +33,70 @@ class QuestionFormItem {
 
   void dispose() {
     questionController.dispose();
-    optionController.forEach((element) {
+    for (var element in optionController) {
       element.dispose();
-    });
+    }
   }
 }
 
 class _AddExamScreenState extends State<AddExamScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
-  final _timeLimitCOntroller = TextEditingController();
+  final _timeLimitController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String? _selectedCategoryId;
-  List<QuestionFormItem> _questionItems = [];
+  final List<QuestionFormItem> _questionItems = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _selectedCategoryId = widget.categoryId;
-    _addQuestion();
+    if (widget.examId != null) {
+      _loadExamData();
+    } else {
+      _addQuestion(); // Add initial question only for new exams
+    }
+  }
+
+  Future<void> _loadExamData() async {
+    try {
+      final examDoc =
+          await _firestore.collection("exames").doc(widget.examId).get();
+      if (examDoc.exists) {
+        final exam = Exam.fromMap(
+          examDoc.id,
+          examDoc.data() as Map<String, dynamic>,
+        );
+        _titleController.text = exam.title;
+        _timeLimitController.text = exam.timeLimit.toString();
+        _selectedCategoryId = exam.category;
+
+        // Clear existing questions and add questions from the loaded exam
+        _questionItems.clear();
+        for (var question in exam.questions) {
+          _questionItems.add(
+            QuestionFormItem(
+              questionController: TextEditingController(text: question.text),
+              optionController:
+                  question.options
+                      .map((option) => TextEditingController(text: option))
+                      .toList(),
+              correctOptionIndex: question.correctOptionIndex,
+            ),
+          );
+        }
+        setState(() {}); // Update UI after loading data
+      }
+    } catch (e) {
+      print("Error loading exam data: $e");
+      // Handle error, maybe show a snackbar
+    }
   }
 
   @override
   void dispose() {
-    _timeLimitCOntroller.dispose();
+    _timeLimitController.dispose();
     for (var item in _questionItems) {
       item.dispose();
     }
@@ -76,15 +123,27 @@ class _AddExamScreenState extends State<AddExamScreen> {
   }
 
   Future<void> _saveExam() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     if (!_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = false;
+      });
       return;
     }
     if (_selectedCategoryId == null) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Please select a category")));
+      setState(() {
+        _isLoading = false;
+      });
       return;
     }
+
+    if (!mounted) return;
 
     try {
       final question =
@@ -99,41 +158,54 @@ class _AddExamScreenState extends State<AddExamScreen> {
               )
               .toList();
 
+      final exam =
+          Exam(
+            id: widget.examId ?? _firestore.collection("exames").doc().id,
+            title: _titleController.text.trim(),
+            category: _selectedCategoryId!,
+            timeLimit: int.parse(_timeLimitController.text),
+            questions: question,
+            createdAt: DateTime.now(),
+            updatedAt: null,
+          ).toMap();
+
       await _firestore
           .collection("exames")
-          .doc()
-          .set(
-            Exam(
-              id: _firestore.collection("exames").doc().id,
-              title: _titleController.text.trim(),
-              category: _selectedCategoryId!,
-              timeLimit: int.parse(_timeLimitCOntroller.text),
-              questions: question,
-              createdAt: DateTime.now(),
-              updatedAt: null,
-            ).toMap(),
-          );
+          .doc(widget.examId ?? _firestore.collection("exames").doc().id)
+          .set(exam);
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            "Exam added successfully",
+            "Exam saved successfully",
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: AppTheme.secondaryColor,
         ),
       );
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+      if (widget.onExamAdded != null) {
+        widget.onExamAdded!();
+      }
+      if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            "Failed to add exam",
+            "Failed to save exam",
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.redAccent,
         ),
       );
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -141,8 +213,8 @@ class _AddExamScreenState extends State<AddExamScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Add Exam',
+        title: Text(
+          widget.examId == null ? 'Add Exam' : 'Edit Exam',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -164,8 +236,10 @@ class _AddExamScreenState extends State<AddExamScreen> {
                 ),
                 SizedBox(height: 20),
                 TextFormField(
-                  controller: _timeLimitCOntroller,
+                  controller: _titleController,
                   decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(vertical: 20),
                     labelText: "Exam Title",
                     hintText: "Enter exam title",
                     prefixIcon: Icon(Icons.title, color: AppTheme.primaryColor),
@@ -179,7 +253,7 @@ class _AddExamScreenState extends State<AddExamScreen> {
                 ),
                 SizedBox(height: 16),
                 if (widget.categoryId == null)
-                  StreamBuilder(
+                  StreamBuilder<QuerySnapshot>(
                     stream:
                         _firestore
                             .collection("categories")
@@ -200,12 +274,17 @@ class _AddExamScreenState extends State<AddExamScreen> {
                       final categories =
                           snapshot.data!.docs
                               .map(
-                                (doc) => Category.fromMap(doc.id, doc.data()),
+                                (doc) => Category.fromMap(
+                                  doc.id,
+                                  doc.data() as Map<String, dynamic>? ?? {},
+                                ),
                               )
                               .toList();
                       return DropdownButtonFormField<String>(
                         value: _selectedCategoryId,
                         decoration: InputDecoration(
+                          fillColor: Colors.white,
+                          contentPadding: EdgeInsets.symmetric(vertical: 20),
                           labelText: "Category",
                           hintText: "Select category",
                           prefixIcon: Icon(
@@ -217,8 +296,8 @@ class _AddExamScreenState extends State<AddExamScreen> {
                             categories
                                 .map(
                                   (cat) => DropdownMenuItem(
-                                    child: Text(cat.name),
                                     value: cat.id,
+                                    child: Text(cat.name),
                                   ),
                                 )
                                 .toList(), // Fixed typo here
@@ -228,15 +307,19 @@ class _AddExamScreenState extends State<AddExamScreen> {
                           });
                         },
                         validator: (value) {
-                          value == null ? "Please select a category" : null;
+                          return value == null
+                              ? "Please select a category"
+                              : null;
                         },
                       );
                     },
                   ),
                 SizedBox(height: 20),
                 TextFormField(
-                  controller: _timeLimitCOntroller,
+                  controller: _timeLimitController,
                   decoration: InputDecoration(
+                    fillColor: Colors.white,
+                    contentPadding: EdgeInsets.symmetric(vertical: 20),
                     labelText: "Time Limit (in minutes)",
                     hintText: "Enter time limit",
                     prefixIcon: Icon(Icons.timer, color: AppTheme.primaryColor),
@@ -345,6 +428,7 @@ class _AddExamScreenState extends State<AddExamScreen> {
                                   child: Row(
                                     children: [
                                       Radio<int>(
+                                        activeColor: AppTheme.primaryColor,
                                         value: optionIndex,
                                         groupValue: question.correctOptionIndex,
                                         onChanged: (value) {
@@ -353,6 +437,23 @@ class _AddExamScreenState extends State<AddExamScreen> {
                                                 value!;
                                           });
                                         },
+                                      ),
+                                      Expanded(
+                                        child: TextFormField(
+                                          controller: controller,
+                                          decoration: InputDecoration(
+                                            labelText:
+                                                "Option ${optionIndex + 1}",
+                                            hintText: "Enter option",
+                                          ),
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return "Please enter option";
+                                            }
+                                            return null;
+                                          },
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -363,6 +464,34 @@ class _AddExamScreenState extends State<AddExamScreen> {
                         ),
                       );
                     }),
+                    SizedBox(height: 32),
+                    Center(
+                      child: SizedBox(
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed: _isLoading ? null : _saveExam,
+                          child:
+                              _isLoading
+                                  ? SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                  : Text(
+                                    "Save Exam",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ],

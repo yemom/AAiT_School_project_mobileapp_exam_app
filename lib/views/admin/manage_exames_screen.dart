@@ -8,7 +8,9 @@ import 'package:retry/retry.dart';
 
 class ManageExamesScreen extends StatefulWidget {
   final String? categoryId;
-  const ManageExamesScreen({super.key, this.categoryId});
+  final VoidCallback? onExamAdded;
+  const ManageExamesScreen({Key? key, this.categoryId, this.onExamAdded})
+    : super(key: key);
 
   @override
   State<ManageExamesScreen> createState() => _ManageExamesScreenState();
@@ -73,7 +75,7 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
     String? filterCategoryId = _selectedCategoryId ?? widget.categoryId;
 
     if (filterCategoryId != null) {
-      query = query.where("categoryId", isEqualTo: filterCategoryId);
+      query = query.where("category", isEqualTo: filterCategoryId);
     }
 
     return query.snapshots();
@@ -126,8 +128,10 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                   context,
                   MaterialPageRoute(
                     builder:
-                        (context) =>
-                            AddExamScreen(categoryId: widget.categoryId),
+                        (context) => AddExamScreen(
+                          categoryId: widget.categoryId,
+                          onExamAdded: widget.onExamAdded,
+                        ),
                   ),
                 );
               }
@@ -256,6 +260,7 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                                   builder:
                                       (context) => AddExamScreen(
                                         categoryId: widget.categoryId,
+                                        onExamAdded: widget.onExamAdded,
                                       ),
                                 ),
                               );
@@ -323,6 +328,7 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                                   builder:
                                       (context) => AddExamScreen(
                                         categoryId: widget.categoryId,
+                                        onExamAdded: widget.onExamAdded,
                                       ),
                                 ),
                               );
@@ -373,11 +379,21 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                                   size: 16,
                                 ),
                                 const SizedBox(width: 4),
-                                Text("${exam.questions.length} Questions"),
+                                Expanded(
+                                  child: Text(
+                                    "${exam.questions.length} Questions",
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
                                 const SizedBox(width: 16),
                                 const Icon(Icons.timer_outlined, size: 16),
                                 const SizedBox(width: 5),
-                                Text("${exam.timeLimit} Minutes"),
+                                Expanded(
+                                  child: Text(
+                                    "${exam.timeLimit} Minutes",
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
                               ],
                             ),
                           ],
@@ -390,11 +406,30 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                             return [
                               const PopupMenuItem<String>(
                                 value: 'edit',
-                                child: Text('Edit'),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.edit, size: 20),
+                                    SizedBox(width: 8),
+                                    Text('Edit'),
+                                  ],
+                                ),
                               ),
                               const PopupMenuItem<String>(
                                 value: 'delete',
-                                child: Text('Delete'),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.delete,
+                                      size: 20,
+                                      color: Colors.redAccent,
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Delete',
+                                      style: TextStyle(color: Colors.redAccent),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ];
                           },
@@ -420,7 +455,17 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
     Exam exam,
   ) async {
     if (value == "edit") {
-      // TODO: Implement edit action
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => AddExamScreen(
+                categoryId: exam.category,
+                examId: exam.id,
+                onExamAdded: widget.onExamAdded,
+              ),
+        ),
+      );
     } else if (value == "delete") {
       final confirm = await showDialog<bool>(
         context: context,
