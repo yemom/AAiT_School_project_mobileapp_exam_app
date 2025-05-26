@@ -110,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           SizedBox(height: 8),
                           Text(
-                            "Let\s test your knowledge today",
+                            "Lets test your knowledge today",
                             style: TextStyle(
                               fontSize: 16,
 

@@ -26,11 +26,19 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   Future<void> _fetchExames() async {
     try {
+      print('Fetching exams for category ID: ${widget.category.id}');
       final snapshot =
           await FirebaseFirestore.instance
               .collection("exames")
               .where('category', isEqualTo: widget.category.id)
               .get();
+
+      print('Number of documents found: ${snapshot.docs.length}');
+
+      for (var doc in snapshot.docs) {
+        print('Found exam document ID: ${doc.id}');
+      }
+
       setState(() {
         _exames =
             snapshot.docs
@@ -89,7 +97,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   SliverAppBar(
                     foregroundColor: Colors.white,
                     backgroundColor: AppTheme.primaryColor,
-                    expandedHeight: 230,
+                    expandedHeight: 200,
                     floating: false,
                     pinned: true,
                     leading: IconButton(
@@ -229,6 +237,5 @@ class _CategoryScreenState extends State<CategoryScreen> {
         .animate(delay: Duration(milliseconds: 100 * index))
         .slideX(begin: 0.5, end: 0, duration: Duration(milliseconds: 300))
         .fadeIn();
-    ;
   }
 }

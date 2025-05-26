@@ -20,7 +20,7 @@ void main() async {
 
 class ErrorApp extends StatelessWidget {
   final Object error;
-  const ErrorApp({Key? key, required this.error}) : super(key: key);
+  const ErrorApp({super.key, required this.error});
 
   @override
   Widget build(BuildContext context) {
