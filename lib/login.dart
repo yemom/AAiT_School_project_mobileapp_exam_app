@@ -13,10 +13,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final AuthService _authService = AuthService(); // Instance of AuthService
-  // Controller for email input
+  final AuthService _authService = AuthService();
   final _emailController = TextEditingController();
-  // Controller for password input
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
@@ -69,10 +67,12 @@ class _LoginState extends State<Login> {
 
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(18), // Add padding
+          padding: EdgeInsets.all(18),
           child: Column(
             children: [
-              Image.asset("lib/assets/login-icon-vector_942802-6305.avif"),
+              Image.network(
+                'https://img.freepik.com/premium-vector/login-icon-vector_942802-6305.jpg',
+              ),
               const SizedBox(height: 50),
 
               TextField(
@@ -118,7 +118,7 @@ class _LoginState extends State<Login> {
 
               const SizedBox(height: 16),
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
                     "Don't have an account? ",
