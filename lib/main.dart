@@ -1,4 +1,5 @@
 import 'package:another_exam_app/firebase_options.dart';
+import 'package:another_exam_app/signup.dart';
 import 'package:another_exam_app/theme/theme.dart';
 import 'package:another_exam_app/views/user/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -46,7 +47,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
       title: "Exam App",
-      home: HomeScreen(),
+      home: Signup(),
     );
   }
 }

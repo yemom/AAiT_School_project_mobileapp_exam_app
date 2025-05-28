@@ -187,7 +187,7 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                '${scorePercentage}%',
+                                '$scorePercentage%',
                                 style: TextStyle(
                                   fontSize: 40,
                                   fontWeight: FontWeight.bold,
