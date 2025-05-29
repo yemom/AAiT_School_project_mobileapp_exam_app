@@ -1,5 +1,4 @@
 import 'package:another_exam_app/model/exam.dart';
-import 'package:another_exam_app/model/question.dart';
 import 'package:another_exam_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
