@@ -1,6 +1,6 @@
-import 'package:another_exam_app/login.dart';
 import 'package:another_exam_app/service/auth.dart';
 import 'package:another_exam_app/theme/theme.dart';
+import 'package:another_exam_app/service/authenticate.dart';
 import 'package:flutter/material.dart';
 
 class Signup extends StatefulWidget {
@@ -41,7 +41,7 @@ class _SignupState extends State<Signup> {
       );
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const Login()),
+        MaterialPageRoute(builder: (_) => const Authenticate()),
       );
     } else {
       ScaffoldMessenger.of(
@@ -78,7 +78,7 @@ class _SignupState extends State<Signup> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 10),
 
               TextField(
                 controller: _emailController,
@@ -87,7 +87,7 @@ class _SignupState extends State<Signup> {
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 10),
               // Input for password
               TextField(
                 controller: _passwordController,
@@ -110,7 +110,7 @@ class _SignupState extends State<Signup> {
                 ),
                 obscureText: isPasswordHidden,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _selectedRole,
                 decoration: const InputDecoration(
@@ -127,7 +127,7 @@ class _SignupState extends State<Signup> {
                       return DropdownMenuItem(value: role, child: Text(role));
                     }).toList(),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : SizedBox(
@@ -137,25 +137,21 @@ class _SignupState extends State<Signup> {
                       child: const Text('Signup'),
                     ),
                   ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    "Already have an account? ",
-                    style: TextStyle(fontSize: 18),
-                  ),
+                  const Text("Already have an account? "),
                   InkWell(
                     onTap: () {
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (_) => const Login()),
+                        MaterialPageRoute(builder: (_) => const Authenticate()),
                       );
                     },
                     child: const Text(
                       "Login here",
                       style: TextStyle(
-                        fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: Colors.blue,
                         letterSpacing: -1,

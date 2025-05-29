@@ -6,7 +6,7 @@ import 'package:another_exam_app/views/user/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class Login extends StatefulWidget {
-  const Login({super.key});
+  const Login({super.key, required void Function() toggleView});
 
   @override
   _LoginState createState() => _LoginState();
@@ -65,85 +65,83 @@ class _LoginState extends State<Login> {
         ),
       ),
 
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.all(18),
-          child: Column(
-            children: [
-              Image.network(
-                'https://img.freepik.com/premium-vector/login-icon-vector_942802-6305.jpg',
-              ),
-              const SizedBox(height: 50),
-
-              TextField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(18),
+            child: Column(
+              children: [
+                Image.network(
+                  'https://img.freepik.com/premium-vector/login-icon-vector_942802-6305.jpg',
                 ),
-              ),
-              const SizedBox(height: 16),
-              // Input for password
-              TextField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: const OutlineInputBorder(),
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        isPasswordHidden = !isPasswordHidden;
-                      });
-                    },
-                    icon: Icon(
-                      isPasswordHidden
-                          ? Icons.visibility_off
-                          : Icons.visibility,
-                    ),
+                SizedBox(height: 10),
+
+                TextField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(),
                   ),
                 ),
-                obscureText: true, // Hide password
-              ),
-              const SizedBox(height: 30),
-              // Login button or spinner
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _login, // Call login function
-                      child: const Text('Login'),
-                    ),
-                  ),
+                SizedBox(height: 16),
 
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Don't have an account? ",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => Signup()),
-                      );
-                    },
-                    child: const Text(
-                      "Signup here",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blue,
-                        letterSpacing: -1,
+                TextField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          isPasswordHidden = !isPasswordHidden;
+                        });
+                      },
+                      icon: Icon(
+                        isPasswordHidden
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                       ),
                     ),
                   ),
-                ],
-              ),
-            ],
+                  obscureText: true,
+                ),
+                SizedBox(height: 20),
+
+                _isLoading
+                    ? const CircularProgressIndicator()
+                    : SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: _login, // Call login function
+                        child: const Text('Login'),
+                      ),
+                    ),
+
+                SizedBox(height: 16),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't have an account? "),
+                    InkWell(
+                      onTap: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => Signup()),
+                        );
+                      },
+                      child: const Text(
+                        "Signup here",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue,
+                          letterSpacing: -1,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

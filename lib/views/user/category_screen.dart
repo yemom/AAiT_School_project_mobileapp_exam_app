@@ -212,11 +212,15 @@ class _CategoryScreenState extends State<CategoryScreen> {
                               children: [
                                 Icon(Icons.question_answer_outlined, size: 16),
                                 SizedBox(width: 4),
-                                Text('${exam.questions.length} Questions'),
-                                SizedBox(width: 16),
+                                Expanded(
+                                  child: Text(
+                                    '${exam.questions.length} Questions',
+                                  ),
+                                ),
+
                                 Icon(Icons.timer_outlined, size: 16),
                                 SizedBox(width: 4),
-                                Text('${exam.timeLimit} mins'),
+                                Expanded(child: Text('${exam.timeLimit} mins')),
                               ],
                             ),
                           ],

@@ -408,7 +408,7 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                       duration: Duration(milliseconds: 300),
                       delay: Duration(milliseconds: 100 + index),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
             ),

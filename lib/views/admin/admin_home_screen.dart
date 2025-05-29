@@ -1,7 +1,9 @@
+import 'package:another_exam_app/service/authenticate.dart';
 import 'package:another_exam_app/theme/theme.dart';
 import 'package:another_exam_app/views/admin/manage_categories_screen.dart';
 import 'package:another_exam_app/views/admin/manage_exames_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AdminHomeScreen extends StatefulWidget {
@@ -146,8 +148,22 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           'Admin Dashboard',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        elevation: 0,
+        elevation: 0.0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            color: AppTheme.textPrimaryColor,
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const Authenticate()),
+              );
+            },
+          ),
+        ],
       ),
+
       body: FutureBuilder<Map<String, dynamic>>(
         future: _ftechStatistics(),
         builder: (context, snapshot) {
@@ -217,7 +233,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               Icon(
                                 Icons.pie_chart_rounded,
                                 color: AppTheme.primaryColor,
-                                size: 24,
                               ),
                               SizedBox(width: 12),
                               Text(
@@ -317,7 +332,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               Icon(
                                 Icons.history_rounded,
                                 color: AppTheme.primaryColor,
-                                size: 24,
                               ),
                               SizedBox(width: 12),
                               Text(
@@ -354,7 +368,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                       child: Icon(
                                         Icons.assignment_rounded,
                                         color: AppTheme.primaryColor,
-                                        size: 20,
                                       ),
                                     ),
                                     SizedBox(width: 12),
@@ -401,7 +414,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               Icon(
                                 Icons.speed_rounded,
                                 color: AppTheme.primaryColor,
-                                size: 24,
                               ),
                               SizedBox(width: 12),
                               Text(
@@ -425,8 +437,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                             children: [
                               _buildNavigationCard(
                                 'Manage Exames',
-                                Icons
-                                    .assignment_turned_in_rounded, // Corrected icon
+                                Icons.assignment_turned_in_rounded,
                                 () {
                                   Navigator.push(
                                     context,
@@ -441,8 +452,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               ),
                               _buildNavigationCard(
                                 'Manage Categories',
-                                Icons
-                                    .category_rounded, // Using a category icon for managing categories
+                                Icons.category_rounded,
                                 () {
                                   Navigator.push(
                                     context,

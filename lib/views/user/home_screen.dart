@@ -1,7 +1,9 @@
 import 'package:another_exam_app/model/category.dart' as model;
+import 'package:another_exam_app/service/authenticate.dart';
 import 'package:another_exam_app/theme/theme.dart';
 import 'package:another_exam_app/views/user/category_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
@@ -59,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 categoryFilter == null ||
                 categoryFilter == "All" ||
                 cat.name.toLowerCase() == categoryFilter.toLowerCase();
-            return matchCategory && matchCategory;
+            return matchSearch && matchCategory;
           }).toList();
     });
   }
@@ -90,6 +92,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.white,
               ),
             ),
+            elevation: 0.0,
+            actions: [
+              IconButton(
+                icon: Icon(Icons.exit_to_app),
+                color: AppTheme.backgroundColor,
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Authenticate(),
+                    ),
+                  );
+                },
+              ),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               background: SafeArea(
                 child: Column(
@@ -222,8 +240,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         childCount: _filteredCategories.length,
                       ),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 200.0, // You can adjust this value
                         mainAxisSpacing: 16,
                         crossAxisSpacing: 16,
                         childAspectRatio: 0.8,
@@ -236,66 +254,71 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCategoryCard(model.Category category, int index) {
-    return Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CategoryScreen(category: category),
+    return SingleChildScrollView(
+      child:
+          Card(
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
                 ),
-              );
-            },
-            child: Container(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.quiz,
-                      size: 48,
-                      color: AppTheme.primaryColor,
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    category.name,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.textPrimaryColor,
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    category.description,
-                    style: TextStyle(
-                      fontSize: 14,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(16),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) => CategoryScreen(category: category),
+                      ),
+                    );
+                  },
+                  child: SingleChildScrollView(
+                    child: Container(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primaryColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.quiz,
+                              color: AppTheme.primaryColor,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            category.name,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.textPrimaryColor,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          Text(
+                            category.description,
+                            style: TextStyle(
+                              fontSize: 14,
 
-                      color: AppTheme.textScondaryColor,
+                              color: AppTheme.textScondaryColor,
+                            ),
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
                     ),
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                ],
-              ),
-            ),
-          ),
-        )
-        .animate(delay: Duration(milliseconds: 100 * index))
-        .slideY(begin: 0.5, end: 0, duration: Duration(milliseconds: 300))
-        .fadeIn();
+                ),
+              )
+              .animate(delay: Duration(milliseconds: 100 * index))
+              .slideY(begin: 0.5, end: 0, duration: Duration(milliseconds: 300))
+              .fadeIn(),
+    );
   }
 }
