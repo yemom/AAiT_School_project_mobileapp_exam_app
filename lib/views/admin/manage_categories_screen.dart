@@ -130,7 +130,12 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                       fontSize: 16,
                     ),
                   ),
-                  subtitle: Text(category.description),
+                  subtitle: Expanded(
+                    child: Text(
+                      category.description,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
                   trailing: PopupMenuButton(
                     itemBuilder:
                         (context) => [

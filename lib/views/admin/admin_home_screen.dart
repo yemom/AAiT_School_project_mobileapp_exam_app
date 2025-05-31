@@ -430,7 +430,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                           GridView.count(
                             crossAxisCount: 2,
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
+
                             mainAxisSpacing: 16,
                             childAspectRatio: 0.9,
                             crossAxisSpacing: 16,
@@ -469,6 +469,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 20.0),
                 ],
               ),
             ),

@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             "Welcome Student!",
