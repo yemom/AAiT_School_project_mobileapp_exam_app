@@ -257,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         childCount: _filteredCategories.length,
                       ),
                       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 200.0, // You can adjust this value
+                        maxCrossAxisExtent: 200.0,
                         mainAxisSpacing: 16,
                         crossAxisSpacing: 16,
                         childAspectRatio: 0.8,

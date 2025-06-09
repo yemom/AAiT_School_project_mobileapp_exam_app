@@ -27,7 +27,6 @@ class _ExamPlayScreenState extends State<ExamPlayScreen>
   int _remainingSeconds = 0;
   Timer? _timer;
 
-  // Add size variables
   late double mediumIconSize;
   late double smallIconSize;
   late double titleFontSize;

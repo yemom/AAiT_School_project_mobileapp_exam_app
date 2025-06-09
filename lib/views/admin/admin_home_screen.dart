@@ -16,6 +16,25 @@ class AdminHomeScreen extends StatefulWidget {
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Add size variables with constraints
+  late double mediumIconSize;
+  late double smallIconSize;
+  late double titleFontSize;
+  late double subtitleFontSize;
+  late double bodyFontSize;
+
+  void _calculateSizes(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final width = size.width;
+
+    // Add constraints to prevent too large or too small sizes
+    mediumIconSize = (width * 0.06).clamp(24.0, 40.0);
+    smallIconSize = (width * 0.04).clamp(16.0, 28.0);
+    titleFontSize = (width * 0.06).clamp(20.0, 32.0);
+    subtitleFontSize = (width * 0.04).clamp(14.0, 24.0);
+    bodyFontSize = (width * 0.035).clamp(12.0, 18.0);
+  }
+
   void _refreshData() {
     setState(() {});
   }
@@ -71,36 +90,36 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     IconData icon,
     Color color,
   ) {
-    final size = MediaQuery.of(context).size;
-    final iconSize = size.width * 0.06;
-
     return Card(
       child: Padding(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: EdgeInsets.all(12),
+              padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: color, size: iconSize),
+              child: Icon(icon, color: color, size: mediumIconSize),
             ),
-            SizedBox(height: 16),
+            SizedBox(height: 12),
             Text(
               value,
               style: TextStyle(
-                fontSize: 24,
+                fontSize: titleFontSize * 0.9,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.textPrimaryColor,
               ),
             ),
-            SizedBox(height: 4),
+            SizedBox(height: 2),
             Text(
               title,
-              style: TextStyle(fontSize: 14, color: AppTheme.textScondaryColor),
+              style: TextStyle(
+                fontSize: subtitleFontSize * 0.9,
+                color: AppTheme.textScondaryColor,
+              ),
             ),
           ],
         ),
@@ -109,31 +128,32 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   }
 
   Widget _buildNavigationCard(String title, IconData icon, VoidCallback onTap) {
-    final size = MediaQuery.of(context).size;
-    final iconSize = size.width * 0.06;
-
     return Card(
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(12),
+                padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: AppTheme.primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: AppTheme.primaryColor, size: iconSize),
+                child: Icon(
+                  icon,
+                  color: AppTheme.primaryColor,
+                  size: mediumIconSize,
+                ),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 12),
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: subtitleFontSize,
                   fontWeight: FontWeight.bold,
                   color: AppTheme.textPrimaryColor,
                 ),
@@ -147,21 +167,22 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final smallIconSize = size.width * 0.04;
-    final mediumIconSize = size.width * 0.05;
+    _calculateSizes(context);
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppTheme.backgroundColor,
         title: Text(
           'Admin Dashboard',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: titleFontSize * 0.9,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         elevation: 0.0,
         actions: [
           IconButton(
-            icon: Icon(Icons.exit_to_app),
+            icon: Icon(Icons.exit_to_app, size: mediumIconSize),
             color: AppTheme.textPrimaryColor,
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
@@ -173,7 +194,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
         ],
       ),
-
       body: FutureBuilder<Map<String, dynamic>>(
         future: _ftechStatistics(),
         builder: (context, snapshot) {
@@ -189,27 +209,27 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
           return SafeArea(
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Welcome Admin",
                     style: TextStyle(
-                      fontSize: 24,
+                      fontSize: titleFontSize,
                       fontWeight: FontWeight.bold,
                       color: AppTheme.textPrimaryColor,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 4),
                   Text(
                     "Here's you'r exam application overview",
                     style: TextStyle(
-                      fontSize: 16,
+                      fontSize: subtitleFontSize,
                       color: AppTheme.textScondaryColor,
                     ),
                   ),
-                  SizedBox(height: 24),
+                  SizedBox(height: 20),
                   Row(
                     children: [
                       Expanded(
@@ -249,7 +269,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               Text(
                                 'Category Statistics',
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: titleFontSize * 0.8,
                                   fontWeight: FontWeight.bold,
                                   color: AppTheme.textPrimaryColor,
                                 ),
@@ -288,7 +308,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                           Text(
                                             data['name'] as String,
                                             style: TextStyle(
-                                              fontSize: 16,
+                                              fontSize: subtitleFontSize * 0.9,
                                               fontWeight: FontWeight.w500,
                                               color: AppTheme.textPrimaryColor,
                                             ),
@@ -297,7 +317,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                           Text(
                                             "${data['count']} ${(data['count'] as int) == 1 ? 'exam' : 'exames'}",
                                             style: TextStyle(
-                                              fontSize: 14,
+                                              fontSize: bodyFontSize,
                                               color: AppTheme.textScondaryColor,
                                             ),
                                           ),
@@ -349,7 +369,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               Text(
                                 'Recent Activity',
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: titleFontSize * 0.8,
                                   fontWeight: FontWeight.bold,
                                   color: AppTheme.textPrimaryColor,
                                 ),
@@ -392,6 +412,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                           Text(
                                             examData['title'],
                                             style: TextStyle(
+                                              fontSize: subtitleFontSize * 0.9,
                                               fontWeight: FontWeight.bold,
                                               color: AppTheme.textPrimaryColor,
                                             ),
@@ -401,7 +422,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                             'Created on ${_formatData(examData['createdAt'].toDate())}',
                                             style: TextStyle(
                                               color: AppTheme.textScondaryColor,
-                                              fontSize: 12,
+                                              fontSize: bodyFontSize,
                                             ),
                                           ),
                                         ],
@@ -433,7 +454,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               Text(
                                 'Exam Action',
                                 style: TextStyle(
-                                  fontSize: 18,
+                                  fontSize: titleFontSize * 0.8,
                                   fontWeight: FontWeight.bold,
                                   color: AppTheme.textPrimaryColor,
                                 ),

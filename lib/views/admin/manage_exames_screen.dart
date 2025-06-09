@@ -84,13 +84,8 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
       (category) => category.id == selectedCategoryId,
       orElse:
           () => Category(
-            id:
-                selectedCategoryId ??
-                'unknown_category_id', // Handle nullable ID
-            name:
-                selectedCategoryId == null
-                    ? "Unknown Category"
-                    : "Unknown", // Adjust name based on nullability
+            id: selectedCategoryId ?? 'unknown_category_id',
+            name: selectedCategoryId == null ? "Unknown Category" : "Unknown",
             description: '',
           ),
     );
