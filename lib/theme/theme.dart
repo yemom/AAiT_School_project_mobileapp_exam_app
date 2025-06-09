@@ -21,7 +21,7 @@ class AppTheme {
         centerTitle: true,
         iconTheme: IconThemeData(color: textPrimaryColor),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: cardColor,
         elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
