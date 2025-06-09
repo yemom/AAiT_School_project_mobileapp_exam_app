@@ -18,14 +18,29 @@ class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
   List<model.Category> _allCategories = [];
   List<model.Category> _filteredCategories = [];
-
   List<String> _categoryFiltters = ['All'];
   String _selectedFiltter = "All";
+
+  // Add size variables
+  late double mediumIconSize;
+  late double smallIconSize;
+  late double titleFontSize;
+  late double subtitleFontSize;
+  late double bodyFontSize;
 
   @override
   void initState() {
     super.initState();
     _fetchCategories();
+  }
+
+  void _calculateSizes(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    mediumIconSize = size.width * 0.06;
+    smallIconSize = size.width * 0.04;
+    titleFontSize = size.width * 0.06;
+    subtitleFontSize = size.width * 0.04;
+    bodyFontSize = size.width * 0.035;
   }
 
   Future<void> _fetchCategories() async {
@@ -68,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _calculateSizes(context);
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       body: CustomScrollView(
@@ -87,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
             title: Text(
               "Exam App",
               style: TextStyle(
-                fontSize: 24,
+                fontSize: titleFontSize,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
@@ -121,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text(
                             "Welcome Student!",
                             style: TextStyle(
-                              fontSize: 28,
+                              fontSize: titleFontSize,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,
                             ),
@@ -130,8 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text(
                             "Lets test your knowledge today",
                             style: TextStyle(
-                              fontSize: 16,
-
+                              fontSize: subtitleFontSize,
                               color: Colors.white.withOpacity(0.8),
                             ),
                           ),
@@ -156,6 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 prefix: Icon(
                                   Icons.search,
                                   color: AppTheme.primaryColor,
+                                  size: smallIconSize,
                                 ),
                                 suffixIcon:
                                     _searchController.text.isNotEmpty
@@ -255,70 +271,68 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildCategoryCard(model.Category category, int index) {
     return SingleChildScrollView(
-      child:
-          Card(
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(16),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => CategoryScreen(category: category),
+          child: Card(
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CategoryScreen(category: category),
+                  ),
+                );
+              },
+              child: SingleChildScrollView(
+                child: Container(
+                  padding: EdgeInsets.all(16),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primaryColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.quiz,
+                          color: AppTheme.primaryColor,
+                          size: mediumIconSize,
+                        ),
                       ),
-                    );
-                  },
-                  child: SingleChildScrollView(
-                    child: Container(
-                      padding: EdgeInsets.all(16),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: AppTheme.primaryColor.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(
-                              Icons.quiz,
-                              color: AppTheme.primaryColor,
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            category.name,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.textPrimaryColor,
-                            ),
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            category.description,
-                            style: TextStyle(
-                              fontSize: 14,
-
-                              color: AppTheme.textScondaryColor,
-                            ),
-                            textAlign: TextAlign.center,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                      SizedBox(height: 16),
+                      Text(
+                        category.name,
+                        style: TextStyle(
+                          fontSize: titleFontSize * 0.8,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.textPrimaryColor,
+                        ),
                       ),
-                    ),
+                      SizedBox(height: 16),
+                      Text(
+                        category.description,
+                        style: TextStyle(
+                          fontSize: bodyFontSize,
+                          color: AppTheme.textScondaryColor,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
                   ),
                 ),
-              )
-              .animate(delay: Duration(milliseconds: 100 * index))
-              .slideY(begin: 0.5, end: 0, duration: Duration(milliseconds: 300))
-              .fadeIn(),
-    );
+              ),
+            ),
+          ),
+        )
+        .animate(delay: Duration(milliseconds: 100 * index))
+        .slideY(begin: 0.5, end: 0, duration: Duration(milliseconds: 300))
+        .fadeIn();
   }
 }

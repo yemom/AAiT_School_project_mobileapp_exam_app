@@ -71,6 +71,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     IconData icon,
     Color color,
   ) {
+    final size = MediaQuery.of(context).size;
+    final iconSize = size.width * 0.06;
+
     return Card(
       child: Padding(
         padding: EdgeInsets.all(20),
@@ -83,7 +86,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: color, size: 25),
+              child: Icon(icon, color: color, size: iconSize),
             ),
             SizedBox(height: 16),
             Text(
@@ -106,6 +109,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   }
 
   Widget _buildNavigationCard(String title, IconData icon, VoidCallback onTap) {
+    final size = MediaQuery.of(context).size;
+    final iconSize = size.width * 0.06;
+
     return Card(
       child: InkWell(
         onTap: onTap,
@@ -121,7 +127,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                   color: AppTheme.primaryColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(icon, color: AppTheme.primaryColor, size: 25),
+                child: Icon(icon, color: AppTheme.primaryColor, size: iconSize),
               ),
               SizedBox(height: 16),
               Text(
@@ -141,6 +147,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final smallIconSize = size.width * 0.04;
+    final mediumIconSize = size.width * 0.05;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppTheme.backgroundColor,
@@ -233,6 +243,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               Icon(
                                 Icons.pie_chart_rounded,
                                 color: AppTheme.primaryColor,
+                                size: mediumIconSize,
                               ),
                               SizedBox(width: 12),
                               Text(
@@ -332,6 +343,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               Icon(
                                 Icons.history_rounded,
                                 color: AppTheme.primaryColor,
+                                size: mediumIconSize,
                               ),
                               SizedBox(width: 12),
                               Text(
@@ -368,6 +380,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                       child: Icon(
                                         Icons.assignment_rounded,
                                         color: AppTheme.primaryColor,
+                                        size: smallIconSize,
                                       ),
                                     ),
                                     SizedBox(width: 12),
@@ -414,6 +427,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               Icon(
                                 Icons.speed_rounded,
                                 color: AppTheme.primaryColor,
+                                size: mediumIconSize,
                               ),
                               SizedBox(width: 12),
                               Text(

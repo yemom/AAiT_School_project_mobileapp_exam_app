@@ -27,6 +27,22 @@ class _ExamPlayScreenState extends State<ExamPlayScreen>
   int _remainingSeconds = 0;
   Timer? _timer;
 
+  // Add size variables
+  late double mediumIconSize;
+  late double smallIconSize;
+  late double titleFontSize;
+  late double subtitleFontSize;
+  late double bodyFontSize;
+
+  void _calculateSizes(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    mediumIconSize = size.width * 0.06;
+    smallIconSize = size.width * 0.04;
+    titleFontSize = size.width * 0.06;
+    subtitleFontSize = size.width * 0.04;
+    bodyFontSize = size.width * 0.035;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -123,6 +139,7 @@ class _ExamPlayScreenState extends State<ExamPlayScreen>
 
   @override
   Widget build(BuildContext context) {
+    _calculateSizes(context);
     return Scaffold(
       backgroundColor: AppTheme.primaryColor,
       body: SafeArea(
@@ -154,6 +171,7 @@ class _ExamPlayScreenState extends State<ExamPlayScreen>
                         },
                         icon: Icon(Icons.close),
                         color: AppTheme.textPrimaryColor,
+                        iconSize: mediumIconSize,
                       ),
                       Stack(
                         alignment: Alignment.center,
@@ -175,7 +193,7 @@ class _ExamPlayScreenState extends State<ExamPlayScreen>
                           Text(
                             '$_remainingMinutes:${_remainingSeconds.toString().padLeft(2, '0')}',
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: subtitleFontSize,
                               fontWeight: FontWeight.bold,
                               color: _getTimerColor(),
                             ),
@@ -254,7 +272,7 @@ class _ExamPlayScreenState extends State<ExamPlayScreen>
               Text(
                 'Question ${index + 1}',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: bodyFontSize,
                   color: AppTheme.textScondaryColor,
                 ),
               ),
@@ -262,7 +280,7 @@ class _ExamPlayScreenState extends State<ExamPlayScreen>
               Text(
                 question.text,
                 style: TextStyle(
-                  fontSize: 20,
+                  fontSize: titleFontSize,
                   fontWeight: FontWeight.bold,
                   color: AppTheme.textPrimaryColor,
                 ),

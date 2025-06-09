@@ -116,6 +116,13 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final mediumIconSize = size.width * 0.06;
+    final smallIconSize = size.width * 0.04;
+    final titleFontSize = size.width * 0.06;
+    final subtitleFontSize = size.width * 0.04;
+    final bodyFontSize = size.width * 0.035;
+
     final score = widget.correctAnswers / widget.totalQuestions;
     final scorePercentage = (score * 100).round();
     final incorrectAnswers = widget.totalQuestions - widget.correctAnswers;
@@ -158,7 +165,7 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                         Text(
                           "Exam Result",
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: titleFontSize,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -189,7 +196,7 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                               Text(
                                 '$scorePercentage%',
                                 style: TextStyle(
-                                  fontSize: 40,
+                                  fontSize: titleFontSize * 1.5,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white.withOpacity(0.2),
                                 ),
@@ -197,7 +204,7 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                               Text(
                                 '${((widget.correctAnswers / widget.totalQuestions) * 100).toInt()}',
                                 style: TextStyle(
-                                  fontSize: 20,
+                                  fontSize: subtitleFontSize,
                                   color: Colors.white.withOpacity(0.2),
                                 ),
                               ),
@@ -234,14 +241,14 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                         Icon(
                           _getPerformanceIcon(score),
                           color: _getScoreColor(score),
-                          size: 20,
+                          size: smallIconSize,
                         ),
                         SizedBox(height: 8),
                         Text(
                           _getPerformanceMessage(score),
                           style: TextStyle(
                             color: _getScoreColor(score),
-                            fontSize: 22,
+                            fontSize: titleFontSize,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -286,12 +293,16 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.analytics, color: AppTheme.primaryColor),
+                      Icon(
+                        Icons.analytics,
+                        color: AppTheme.primaryColor,
+                        size: mediumIconSize,
+                      ),
                       SizedBox(width: 8),
                       Text(
                         "Detailed Analysis",
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: titleFontSize,
                           fontWeight: FontWeight.bold,
                           color: AppTheme.textPrimaryColor,
                         ),

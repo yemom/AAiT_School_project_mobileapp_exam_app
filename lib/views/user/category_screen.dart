@@ -18,6 +18,22 @@ class _CategoryScreenState extends State<CategoryScreen> {
   List<Exam> _exames = [];
   bool _isLoading = true;
 
+  // Add size variables
+  late double mediumIconSize;
+  late double smallIconSize;
+  late double titleFontSize;
+  late double subtitleFontSize;
+  late double bodyFontSize;
+
+  void _calculateSizes(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    mediumIconSize = size.width * 0.06;
+    smallIconSize = size.width * 0.04;
+    titleFontSize = size.width * 0.06;
+    subtitleFontSize = size.width * 0.04;
+    bodyFontSize = size.width * 0.035;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -58,6 +74,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    _calculateSizes(context);
     return Scaffold(
       body:
           _isLoading
@@ -71,14 +88,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   children: [
                     Icon(
                       Icons.quiz_outlined,
-                      size: 64,
+                      size: mediumIconSize,
                       color: AppTheme.textScondaryColor,
                     ),
                     SizedBox(height: 16),
                     Text(
                       "No exams available in this category",
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: subtitleFontSize,
                         color: AppTheme.textScondaryColor,
                       ),
                     ),
@@ -122,14 +139,14 @@ class _CategoryScreenState extends State<CategoryScreen> {
                           children: [
                             Icon(
                               Icons.category_rounded,
-                              size: 64,
+                              size: mediumIconSize,
                               color: Colors.white,
                             ),
                             SizedBox(height: 16),
                             Text(
                               widget.category.name,
                               style: TextStyle(
-                                fontSize: 24,
+                                fontSize: titleFontSize,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),
@@ -160,8 +177,6 @@ class _CategoryScreenState extends State<CategoryScreen> {
   }
 
   Widget _buildExamCard(Exam exam, int index) {
-    // Add this print statement:
-    print('Debugging exam title: ${exam.title}');
     return Card(
           margin: EdgeInsets.only(bottom: 16),
           elevation: 4,
@@ -188,7 +203,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     child: Icon(
                       Icons.quiz_rounded,
                       color: AppTheme.primaryColor,
-                      size: 32,
+                      size: mediumIconSize,
                     ),
                   ),
                   SizedBox(width: 16),
@@ -199,7 +214,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                         Text(
                           exam.title,
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: titleFontSize * 0.8,
                             fontWeight: FontWeight.bold,
                             color: AppTheme.textPrimaryColor,
                           ),
@@ -210,15 +225,17 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             SizedBox(height: 8),
                             Row(
                               children: [
-                                Icon(Icons.question_answer_outlined, size: 16),
+                                Icon(
+                                  Icons.question_answer_outlined,
+                                  size: smallIconSize,
+                                ),
                                 SizedBox(width: 4),
                                 Expanded(
                                   child: Text(
                                     '${exam.questions.length} Questions',
                                   ),
                                 ),
-
-                                Icon(Icons.timer_outlined, size: 16),
+                                Icon(Icons.timer_outlined, size: smallIconSize),
                                 SizedBox(width: 4),
                                 Expanded(child: Text('${exam.timeLimit} mins')),
                               ],
@@ -230,7 +247,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   ),
                   Icon(
                     Icons.chevron_right_rounded,
-                    size: 30,
+                    size: mediumIconSize,
                     color: AppTheme.primaryColor,
                   ),
                 ],
