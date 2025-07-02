@@ -213,7 +213,7 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.assignment_outlined,
                           size: 64,
                           color: AppTheme.textScondaryColor,
@@ -278,7 +278,7 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.assignment_outlined,
                           size: 64,
                           color: AppTheme.textScondaryColor,

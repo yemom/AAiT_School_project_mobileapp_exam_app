@@ -62,7 +62,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.category_outlined,
                     size: 64,
                     color: AppTheme.textScondaryColor,

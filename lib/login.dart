@@ -21,7 +21,7 @@ class _LoginState extends State<Login> {
 
   void _login() async {
     setState(() {
-      _isLoading = true; // Show spinner
+      _isLoading = true;
     });
 
     String? result = await _authService.login(
@@ -30,10 +30,11 @@ class _LoginState extends State<Login> {
     );
 
     setState(() {
-      _isLoading = false; // Hide spinner
+      _isLoading = false;
     });
 
-    // Navigate based on role or show error message
+    print('Login result: $result');
+
     if (result == 'Admin') {
       Navigator.pushReplacement(
         context,
@@ -44,10 +45,32 @@ class _LoginState extends State<Login> {
         context,
         MaterialPageRoute(builder: (context) => HomeScreen()),
       );
+    } else if (result != null &&
+        result.contains('firebase_auth/user-not-found')) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('User not registered. Please sign up.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } else if (result != null &&
+        result.contains('firebase_auth/wrong-password')) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Invalid email or password'),
+          backgroundColor: Colors.red,
+        ),
+      );
     } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Login Failed: $result')));
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login Failed: $result'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -112,7 +135,8 @@ class _LoginState extends State<Login> {
                     : SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _login, // Call login function
+                        onPressed: _login,
+                        // Call login function
                         child: const Text('Login'),
                       ),
                     ),
@@ -133,7 +157,7 @@ class _LoginState extends State<Login> {
                         "Signup here",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue,
+                          color: AppTheme.primaryColor,
                           letterSpacing: -1,
                         ),
                       ),

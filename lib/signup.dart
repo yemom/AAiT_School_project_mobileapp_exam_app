@@ -153,7 +153,7 @@ class _SignupState extends State<Signup> {
                       "Login here",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: Colors.blue,
+                        color: AppTheme.primaryColor,
                         letterSpacing: -1,
                       ),
                     ),
