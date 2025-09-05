@@ -168,11 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               onChanged: (value) => _filterdCategories(value),
                               decoration: InputDecoration(
                                 hintText: "search categories....",
-                                prefix: Icon(
-                                  Icons.search,
-                                  color: AppTheme.primaryColor,
-                                  size: smallIconSize,
-                                ),
+
                                 suffixIcon:
                                     _searchController.text.isNotEmpty
                                         ? IconButton(

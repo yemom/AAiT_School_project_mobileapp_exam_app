@@ -18,6 +18,7 @@ class _LoginState extends State<Login> {
   final _passwordController = TextEditingController();
 
   bool _isLoading = false;
+  bool isPasswordHidden = true;
 
   void _login() async {
     setState(() {
@@ -74,8 +75,6 @@ class _LoginState extends State<Login> {
     }
   }
 
-  bool isPasswordHidden = true;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,6 +109,7 @@ class _LoginState extends State<Login> {
 
                 TextField(
                   controller: _passwordController,
+                  obscureText: isPasswordHidden,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     border: const OutlineInputBorder(),
@@ -126,7 +126,6 @@ class _LoginState extends State<Login> {
                       ),
                     ),
                   ),
-                  obscureText: true,
                 ),
                 SizedBox(height: 20),
 
