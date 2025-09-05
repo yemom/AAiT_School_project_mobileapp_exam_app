@@ -5,6 +5,7 @@ import 'package:another_exam_app/views/admin/manage_exames_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:another_exam_app/service/auth.dart' as app_auth;
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -15,6 +16,8 @@ class AdminHomeScreen extends StatefulWidget {
 
 class _AdminHomeScreenState extends State<AdminHomeScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final app_auth.AuthService _authService = app_auth.AuthService();
+  bool _isSuperAdmin = false;
 
   // Add size variables with constraints
   late double mediumIconSize;
@@ -37,6 +40,69 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
 
   void _refreshData() {
     setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkSuperAdmin();
+  }
+
+  Future<void> _checkSuperAdmin() async {
+    final isSuper = await _authService.isSuperAdmin();
+    if (mounted) {
+      setState(() {
+        _isSuperAdmin = isSuper;
+      });
+    }
+  }
+
+  Future<void> _showPromoteDialog() async {
+    final controller = TextEditingController();
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Promote to Admin'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(
+              labelText: 'Target User UID',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final uid = controller.text.trim();
+                if (uid.isEmpty) return;
+                try {
+                  await _authService.promoteUserToAdmin(targetUid: uid);
+                  if (mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('User promoted to admin')),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Failed: $e')));
+                  }
+                }
+              },
+              child: const Text('Promote'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<Map<String, dynamic>> _ftechStatistics() async {
@@ -194,6 +260,14 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
         ],
       ),
+      floatingActionButton:
+          _isSuperAdmin
+              ? FloatingActionButton.extended(
+                onPressed: _showPromoteDialog,
+                icon: const Icon(Icons.admin_panel_settings),
+                label: const Text('Make Admin'),
+              )
+              : null,
       body: FutureBuilder<Map<String, dynamic>>(
         future: _ftechStatistics(),
         builder: (context, snapshot) {

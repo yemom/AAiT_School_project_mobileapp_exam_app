@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:cloud_functions/cloud_functions.dart';
 
 class AuthService {
   // Firebase Authentication instance
@@ -64,5 +65,30 @@ class AuthService {
   // for user log out
   signOut() async {
     _auth.signOut();
+  }
+
+  // Claims helpers
+  Future<bool> isSuperAdmin() async {
+    final user = _auth.currentUser;
+    if (user == null) return false;
+    final idTokenResult = await user.getIdTokenResult(true);
+    final claims = idTokenResult.claims;
+    return claims != null && claims['superAdmin'] == true;
+  }
+
+  Future<bool> isAdmin() async {
+    final user = _auth.currentUser;
+    if (user == null) return false;
+    final idTokenResult = await user.getIdTokenResult(true);
+    final claims = idTokenResult.claims;
+    return claims != null &&
+        (claims['admin'] == true || claims['superAdmin'] == true);
+  }
+
+  // Super-admin only: promote a user to admin via callable function
+  Future<void> promoteUserToAdmin({required String targetUid}) async {
+    final functions = FirebaseFunctions.instanceFor(region: 'us-central1');
+    final callable = functions.httpsCallable('promoteToAdmin');
+    await callable.call(<String, dynamic>{'uid': targetUid});
   }
 }
