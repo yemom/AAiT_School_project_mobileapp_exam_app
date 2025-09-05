@@ -123,9 +123,9 @@ class _ExamPlayScreenState extends State<ExamPlayScreen>
 
   Color _getTimerColor() {
     if (_remainingMinutes < 1) {
-      return Colors.red;
+      return AppTheme.errorColor;
     } else {
-      return Colors.green;
+      return AppTheme.successColor;
     }
   }
 
@@ -300,16 +300,16 @@ class _ExamPlayScreenState extends State<ExamPlayScreen>
                           color:
                               isSelected
                                   ? isCorrect
-                                      ? AppTheme.secondaryColor.withOpacity(0.1)
-                                      : Colors.redAccent.withOpacity(0.1)
+                                      ? AppTheme.successColor
+                                      : AppTheme.errorColor
                                   : Colors.white,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
                             color:
                                 isSelected
                                     ? isCorrect
-                                        ? AppTheme.secondaryColor
-                                        : Colors.redAccent
+                                        ? AppTheme.successColor
+                                        : AppTheme.errorColor
                                     : Colors.grey.shade300,
                           ),
                         ),
@@ -330,8 +330,8 @@ class _ExamPlayScreenState extends State<ExamPlayScreen>
                               color:
                                   isSelected
                                       ? isCorrect
-                                          ? AppTheme.secondaryColor
-                                          : Colors.redAccent
+                                          ? AppTheme.successColor
+                                          : AppTheme.errorColor
                                       : _selectedAnswers[index] != null
                                       ? Colors.grey.shade500
                                       : AppTheme.textPrimaryColor,
@@ -344,11 +344,11 @@ class _ExamPlayScreenState extends State<ExamPlayScreen>
                                           question.correctOptionIndex
                                       ? Icon(
                                         Icons.check_circle_rounded,
-                                        color: AppTheme.secondaryColor,
+                                        color: AppTheme.successColor,
                                       )
                                       : Icon(
                                         Icons.close,
-                                        color: Colors.redAccent,
+                                        color: AppTheme.errorColor,
                                       )
                                   : null,
                         ),

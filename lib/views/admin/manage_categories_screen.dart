@@ -155,7 +155,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                             child: ListTile(
                               leading: Icon(
                                 Icons.delete,
-                                color: Colors.redAccent,
+                                color: AppTheme.errorColor,
                               ),
                               title: Text("Delete"),
                               contentPadding: EdgeInsets.zero,
@@ -219,7 +219,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                   },
                   child: const Text(
                     'Delete',
-                    style: TextStyle(color: Colors.redAccent),
+                    style: TextStyle(color: AppTheme.errorColor),
                   ),
                 ),
               ],

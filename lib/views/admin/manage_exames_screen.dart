@@ -407,12 +407,14 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                                     Icon(
                                       Icons.delete,
                                       size: 20,
-                                      color: Colors.redAccent,
+                                      color: AppTheme.errorColor,
                                     ),
                                     SizedBox(width: 8),
                                     Text(
                                       'Delete',
-                                      style: TextStyle(color: Colors.redAccent),
+                                      style: TextStyle(
+                                        color: AppTheme.errorColor,
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -470,7 +472,7 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                 },
                 child: const Text(
                   'Delete',
-                  style: TextStyle(color: Colors.redAccent),
+                  style: TextStyle(color: AppTheme.errorColor),
                 ),
               ),
             ],

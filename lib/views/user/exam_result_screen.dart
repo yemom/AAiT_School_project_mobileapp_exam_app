@@ -101,9 +101,9 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
   }
 
   Color _getScoreColor(double score) {
-    if (score >= 0.8) return Colors.green;
-    if (score >= 0.5) return Colors.orange;
-    return Colors.redAccent;
+    if (score >= 0.8) return AppTheme.successColor;
+    if (score >= 0.5) return AppTheme.warningColor;
+    return AppTheme.errorColor;
   }
 
   String _getPerformanceMessage(double score) {
@@ -271,7 +271,7 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                       "Correct",
                       widget.correctAnswers.toString(),
                       Icons.check_circle,
-                      Colors.green,
+                      AppTheme.successColor,
                     ),
                   ),
                   SizedBox(height: 16),
@@ -281,7 +281,7 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                       (widget.totalQuestions - widget.correctAnswers)
                           .toString(),
                       Icons.cancel,
-                      Colors.redAccent,
+                      AppTheme.errorColor,
                     ),
                   ),
                 ],
@@ -341,8 +341,8 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                             decoration: BoxDecoration(
                               color:
                                   isCorrect
-                                      ? Colors.green.withOpacity(0.1)
-                                      : Colors.redAccent.withOpacity(0.1),
+                                      ? AppTheme.successColor.withOpacity(0.1)
+                                      : AppTheme.errorColor.withOpacity(0.1),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
@@ -350,7 +350,9 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                                   ? Icons.check_circle_outline
                                   : Icons.close,
                               color:
-                                  isCorrect ? Colors.green : Colors.redAccent,
+                                  isCorrect
+                                      ? AppTheme.successColor
+                                      : AppTheme.errorColor,
                               size: 24,
                             ),
                           ),
@@ -398,14 +400,16 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                                     selectedAnswer != null
                                         ? question.options[selectedAnswer]
                                         : "Not Answered",
-                                    isCorrect ? Colors.green : Colors.redAccent,
+                                    isCorrect
+                                        ? AppTheme.successColor
+                                        : AppTheme.errorColor,
                                   ),
                                   SizedBox(height: 12),
                                   _buldAnswerRow(
                                     "Correct Answer:",
                                     question.options[question
                                         .correctOptionIndex],
-                                    Colors.green,
+                                    AppTheme.successColor,
                                   ),
                                 ],
                               ),

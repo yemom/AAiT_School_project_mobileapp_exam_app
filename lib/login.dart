@@ -52,7 +52,7 @@ class _LoginState extends State<Login> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('User not registered. Please sign up.'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppTheme.errorColor,
         ),
       );
     } else if (result != null &&
@@ -61,7 +61,7 @@ class _LoginState extends State<Login> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Invalid email or password'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppTheme.errorColor,
         ),
       );
     } else {
@@ -69,7 +69,7 @@ class _LoginState extends State<Login> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Login Failed: $result'),
-          backgroundColor: Colors.red,
+          backgroundColor: AppTheme.errorColor,
         ),
       );
     }

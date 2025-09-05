@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color primaryColor = Color(0xFF2196F3);
-  static const Color secondaryColor = Color(0xFF32CD32);
-  static const Color backgroundColor = Color(0xFFF8F9FC);
-  static const Color cardColor = Colors.white;
-  static const Color textPrimaryColor = Color(0xFF2D3748);
-  static const Color textScondaryColor = Color(0xFF718096);
+  static const Color primaryColor = Color(0xFF3F51B5); // Indigo
+  static const Color secondaryColor = Color(0xFF00BFA6); // Teal
+  static const Color backgroundColor = Color(0xFFF5F7FA); // Off-white
+  static const Color cardColor = Colors.white; // Card backgrounds
+  static const Color textPrimaryColor = Color(0xFF1E293B); // Dark Navy
+  static const Color textScondaryColor = Color(0xFF64748B); // Cool Gray
+
+  // Additional states
+  static const Color successColor = Color(0xFF4CAF50); // Correct answers
+  static const Color errorColor = Color(0xFFE53935); // Wrong answers
+  static const Color warningColor = Color(0xFFFFC107); // Review later / warning
 
   static ThemeData get theme {
     return ThemeData(

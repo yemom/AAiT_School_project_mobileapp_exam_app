@@ -200,7 +200,7 @@ class _AddExamScreenState extends State<AddExamScreen> {
             "Failed to save exam",
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.redAccent,
+          backgroundColor: AppTheme.errorColor,
         ),
       );
       setState(() {
@@ -391,7 +391,7 @@ class _AddExamScreenState extends State<AddExamScreen> {
                                       },
                                       icon: Icon(
                                         Icons.delete,
-                                        color: Colors.redAccent,
+                                        color: AppTheme.errorColor,
                                       ),
                                     ),
                                 ],
