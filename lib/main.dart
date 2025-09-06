@@ -63,7 +63,17 @@ class _AuthGate extends StatelessWidget {
       final DocumentSnapshot<Map<String, dynamic>> userDoc =
           await FirebaseFirestore.instance.collection('users').doc(uid).get();
       final Map<String, dynamic>? data = userDoc.data();
-      return data?['role'] as String?;
+      String? rawRole = data?['role'] as String?;
+
+      // Convert raw role to the same format as AuthService (handle both cases)
+      if (rawRole == "admin" ||
+          rawRole == "Admin" ||
+          rawRole == "super_admin" ||
+          rawRole == "Super_Admin") {
+        return "Admin";
+      } else {
+        return "User";
+      }
     } catch (_) {
       return null;
     }
@@ -95,6 +105,7 @@ class _AuthGate extends StatelessWidget {
             }
 
             final String? role = roleSnapshot.data;
+            print('Main.dart - Detected role: $role'); // Debug log
             if (role == 'Admin') {
               return const AdminHomeScreen();
             }

@@ -56,15 +56,23 @@ class AuthService {
               .doc(userCredential.user!.uid)
               .get();
 
-      // Return based on role
-      if (role == "admin") {
+      // Extract role from user document
+      String role =
+          userDoc.data() != null
+              ? (userDoc.data() as Map<String, dynamic>)['role'] ?? 'user'
+              : 'user';
+
+      print('AuthService - Raw role from Firestore: $role'); // Debug log
+
+      // Return based on role (handle both lowercase and capitalized versions)
+      if (role == "admin" || role == "Admin") {
         return "Admin";
-      } else if (role == "super_admin") {
+      } else if (role == "super_admin" || role == "Super_Admin") {
         return "Admin"; // optional: separate SuperAdmin screen
       } else {
         return "User";
       }
-    } on FirebaseAuthException catch (e) {
+    } on auth.FirebaseAuthException catch (e) {
       return e.code; // like 'firebase_auth/wrong-password'
     } catch (e) {
       return e.toString(); // Error: return the exception message

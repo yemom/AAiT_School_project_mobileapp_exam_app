@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AdminSignupForm extends StatefulWidget {
+  const AdminSignupForm({super.key});
+
   @override
   _AdminSignupFormState createState() => _AdminSignupFormState();
 }
@@ -22,14 +24,14 @@ class _AdminSignupFormState extends State<AdminSignupForm> {
       setState(() => _loading = true);
 
       try {
-        // ✅ Create admin user in Firebase Auth
+        // Create admin user in Firebase Auth
         UserCredential userCredential = await _auth
             .createUserWithEmailAndPassword(
               email: _emailController.text.trim(),
               password: _passwordController.text.trim(),
             );
 
-        // ✅ Save role in Firestore
+        // Save role in Firestore
         await _firestore.collection("users").doc(userCredential.user!.uid).set({
           "email": _emailController.text.trim(),
           "role": "Admin",
