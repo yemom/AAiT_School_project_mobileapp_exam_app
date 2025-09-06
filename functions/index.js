@@ -34,7 +34,7 @@ exports.promoteToAdmin = functions.https.onCall(async (data, context) => {
   const user = await admin.auth().getUser(targetUid);
   const existing = user.customClaims || {};
   await admin.auth().setCustomUserClaims(targetUid, { ...existing, admin: true });
-  await admin.firestore().doc(`users/${targetUid}`).set({ role: "admin" }, { merge: true });
+  await admin.firestore().doc(`users/${targetUid}`).set({ role: "Admin" }, { merge: true });
 
   return { message: `User ${targetUid} promoted to admin` };
 });

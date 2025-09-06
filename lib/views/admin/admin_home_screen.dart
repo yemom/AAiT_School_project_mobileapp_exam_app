@@ -1,5 +1,6 @@
 import 'package:another_exam_app/service/authenticate.dart';
 import 'package:another_exam_app/theme/theme.dart';
+import 'package:another_exam_app/views/admin/adminSignupForm.dart';
 import 'package:another_exam_app/views/admin/manage_categories_screen.dart';
 import 'package:another_exam_app/views/admin/manage_exames_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -263,11 +264,17 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       floatingActionButton:
           _isSuperAdmin
               ? FloatingActionButton.extended(
-                onPressed: _showPromoteDialog,
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AdminSignupForm()),
+                  );
+                },
                 icon: const Icon(Icons.admin_panel_settings),
-                label: const Text('Make Admin'),
+                label: const Text('Register Admin'),
               )
               : null,
+
       body: FutureBuilder<Map<String, dynamic>>(
         future: _ftechStatistics(),
         builder: (context, snapshot) {

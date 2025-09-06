@@ -56,7 +56,19 @@ class AuthService {
               .doc(userCredential.user!.uid)
               .get();
 
-      return userDoc['role']; // Return the user's role (Admin/User)
+      // Check if document exists and has role field
+      if (userDoc.exists && userDoc.data() != null) {
+        Map<String, dynamic> userData = userDoc.data() as Map<String, dynamic>;
+        String? role = userData['role'];
+
+        if (role != null) {
+          return role; // Return the user's role (Admin/User)
+        } else {
+          return 'User document exists but role is missing';
+        }
+      } else {
+        return 'User document not found in Firestore';
+      }
     } catch (e) {
       return e.toString(); // Error: return the exception message
     }
