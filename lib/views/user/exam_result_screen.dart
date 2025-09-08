@@ -35,7 +35,7 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.1),
+            color: color.withValues(alpha: 0.1),
             blurRadius: 10,
             spreadRadius: 2,
           ),
@@ -80,7 +80,7 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
         Container(
           padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: answerColor.withOpacity(0.1),
+            color: answerColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Text(
@@ -121,11 +121,9 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
     final smallIconSize = size.width * 0.04;
     final titleFontSize = size.width * 0.06;
     final subtitleFontSize = size.width * 0.04;
-    final bodyFontSize = size.width * 0.035;
 
     final score = widget.correctAnswers / widget.totalQuestions;
     final scorePercentage = (score * 100).round();
-    final incorrectAnswers = widget.totalQuestions - widget.correctAnswers;
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
@@ -140,7 +138,7 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                   end: Alignment.bottomRight,
                   colors: [
                     AppTheme.primaryColor,
-                    AppTheme.primaryColor.withOpacity(0.8),
+                    AppTheme.primaryColor.withValues(alpha: 0.8),
                   ],
                 ),
                 borderRadius: BorderRadius.only(
@@ -198,21 +196,21 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                                 style: TextStyle(
                                   fontSize: titleFontSize * 1.5,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: Colors.white.withValues(alpha: 0.2),
                                 ),
                               ),
                               Text(
                                 '${((widget.correctAnswers / widget.totalQuestions) * 100).toInt()}',
                                 style: TextStyle(
                                   fontSize: subtitleFontSize,
-                                  color: Colors.white.withOpacity(0.2),
+                                  color: Colors.white.withValues(alpha: 0.2),
                                 ),
                               ),
                             ],
                           ),
                           circularStrokeCap: CircularStrokeCap.round,
                           progressColor: Colors.white,
-                          backgroundColor: Colors.white.withOpacity(0.2),
+                          backgroundColor: Colors.white.withValues(alpha: 0.2),
                         ),
                       ),
                     ],
@@ -341,8 +339,8 @@ class _ExamResultScreenState extends State<ExamResultScreen> {
                             decoration: BoxDecoration(
                               color:
                                   isCorrect
-                                      ? AppTheme.successColor.withOpacity(0.1)
-                                      : AppTheme.errorColor.withOpacity(0.1),
+                                      ? AppTheme.successColor.withValues(alpha: 0.1)
+                                      : AppTheme.errorColor.withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(

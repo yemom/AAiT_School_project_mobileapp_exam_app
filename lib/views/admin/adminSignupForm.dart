@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -6,7 +7,7 @@ class AdminSignupForm extends StatefulWidget {
   const AdminSignupForm({super.key});
 
   @override
-  _AdminSignupFormState createState() => _AdminSignupFormState();
+  State<AdminSignupForm> createState() => _AdminSignupFormState();
 }
 
 class _AdminSignupFormState extends State<AdminSignupForm> {

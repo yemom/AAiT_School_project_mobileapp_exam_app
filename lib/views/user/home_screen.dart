@@ -114,13 +114,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icon(Icons.exit_to_app),
                 color: AppTheme.backgroundColor,
                 onPressed: () async {
-                  await FirebaseAuth.instance.signOut();
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Authenticate(),
-                    ),
+                  final navigator = Navigator.of(context);
+                  final route = MaterialPageRoute(
+                    builder: (context) => const Authenticate(),
                   );
+                  await FirebaseAuth.instance.signOut();
+                  navigator.pushReplacement(route);
                 },
               ),
             ],
@@ -147,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             "Lets test your knowledge today",
                             style: TextStyle(
                               fontSize: subtitleFontSize,
-                              color: Colors.white.withOpacity(0.8),
+                              color: Colors.white.withValues(alpha: 0.8),
                             ),
                           ),
                           SizedBox(height: 8),
@@ -157,7 +156,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               borderRadius: BorderRadius.circular(8),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withValues(alpha: 0.1),
                                   blurRadius: 4,
                                   offset: Offset(0, 2),
                                 ),
@@ -291,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         padding: EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppTheme.primaryColor.withOpacity(0.1),
+                          color: AppTheme.primaryColor.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Icon(

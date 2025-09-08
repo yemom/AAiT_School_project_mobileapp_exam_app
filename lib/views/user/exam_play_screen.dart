@@ -5,6 +5,7 @@ import 'package:another_exam_app/model/question.dart';
 import 'package:another_exam_app/theme/theme.dart';
 import 'package:another_exam_app/views/user/exam_result_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 class ExamPlayScreen extends StatefulWidget {
@@ -89,7 +90,9 @@ class _ExamPlayScreenState extends State<ExamPlayScreen>
     _timer?.cancel();
     int correctAnswers = _calculateScroe();
 
-    print('Exam completed with $correctAnswers correct answers.');
+    if (kDebugMode) {
+      print('Exam completed with $correctAnswers correct answers.');
+    }
 
     Navigator.pushReplacement(
       context,
@@ -239,8 +242,8 @@ class _ExamPlayScreenState extends State<ExamPlayScreen>
                   });
                 },
                 itemBuilder: (context, index) {
-                  final Question = widget.exam.questions[index];
-                  return _buildQuestionCard(Question, index);
+                  final question = widget.exam.questions[index];
+                  return _buildQuestionCard(question, index);
                 },
               ),
             ),

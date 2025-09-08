@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:flutter/foundation.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 
 class AuthService {
@@ -62,7 +63,9 @@ class AuthService {
               ? (userDoc.data() as Map<String, dynamic>)['role'] ?? 'user'
               : 'user';
 
-      print('AuthService - Raw role from Firestore: $role'); // Debug log
+      if (kDebugMode) {
+        print('AuthService - Raw role from Firestore: $role');
+      }
 
       // Return based on role (handle both lowercase and capitalized versions)
       if (role == "admin" || role == "Admin") {

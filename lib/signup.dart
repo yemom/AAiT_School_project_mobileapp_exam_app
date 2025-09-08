@@ -7,7 +7,7 @@ class Signup extends StatefulWidget {
   const Signup({super.key});
 
   @override
-  _SignupState createState() => _SignupState();
+  State<Signup> createState() => _SignupState();
 }
 
 class _SignupState extends State<Signup> {
@@ -29,6 +29,8 @@ class _SignupState extends State<Signup> {
       password: _passwordController.text,
       role: 'User',
     );
+
+    if (!mounted) return;
 
     setState(() {
       _isLoading = false;

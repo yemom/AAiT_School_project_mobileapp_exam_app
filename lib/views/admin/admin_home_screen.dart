@@ -58,7 +58,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     }
   }
 
-  Future<void> _showPromoteDialog() async {
+  // Removed unused: _showPromoteDialog
+  /*Future<void> _showPromoteDialog() async {
     final controller = TextEditingController();
     await showDialog(
       context: context,
@@ -104,7 +105,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         );
       },
     );
-  }
+  }*/
 
   Future<Map<String, dynamic>> _ftechStatistics() async {
     final categoriesCount =
@@ -166,7 +167,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             Container(
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: color, size: mediumIconSize),
@@ -253,6 +254,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             color: AppTheme.textPrimaryColor,
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
+              if (!mounted) return;
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const Authenticate()),
@@ -411,8 +413,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                         vertical: 6,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: AppTheme.primaryColor
-                                            .withOpacity(0.1),
+                                        color: AppTheme.primaryColor.withValues(
+                                          alpha: 0.1,
+                                        ),
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(

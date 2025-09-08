@@ -9,7 +9,7 @@ class Login extends StatefulWidget {
   const Login({super.key, required void Function() toggleView});
 
   @override
-  _LoginState createState() => _LoginState();
+  State<Login> createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
@@ -30,11 +30,11 @@ class _LoginState extends State<Login> {
       password: _passwordController.text,
     );
 
+    if (!mounted) return;
+
     setState(() {
       _isLoading = false;
     });
-
-    print('Login result: $result');
 
     if (result == 'Admin') {
       Navigator.pushReplacement(
@@ -73,6 +73,13 @@ class _LoginState extends State<Login> {
         ),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 
   @override

@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +17,9 @@ void main() async {
     );
     runApp(MyApp());
   } catch (e) {
-    print("Error initializing Firebase: $e");
+    if (kDebugMode) {
+      print("Error initializing Firebase: $e");
+    }
 
     runApp(ErrorApp(error: e));
   }
@@ -105,7 +108,9 @@ class _AuthGate extends StatelessWidget {
             }
 
             final String? role = roleSnapshot.data;
-            print('Main.dart - Detected role: $role'); // Debug log
+            if (kDebugMode) {
+              print('Main.dart - Detected role: $role');
+            }
             if (role == 'Admin') {
               return const AdminHomeScreen();
             }

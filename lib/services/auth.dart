@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:flutter/foundation.dart';
 import 'package:another_exam_app/services/user.dart'; // Corrected import path
 
 class AuthService {
@@ -15,7 +16,9 @@ class AuthService {
       auth.User? user = userCredential.user;
       return _userFromFirebaseUser(user);
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
       return null;
     }
   }
@@ -30,7 +33,9 @@ class AuthService {
       auth.User? user = userCredential.user;
       return _userFromFirebaseUser(user);
     } catch (e) {
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
       return null;
     }
   }
@@ -39,7 +44,9 @@ class AuthService {
     try {
       return await _auth.signOut();
     } catch (e) {
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
       return null;
     }
   }
@@ -48,7 +55,9 @@ class AuthService {
     try {
       return await _auth.sendPasswordResetEmail(email: email);
     } catch (e) {
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
       return null;
     }
   }

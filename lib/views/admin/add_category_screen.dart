@@ -2,6 +2,7 @@ import 'package:another_exam_app/model/category.dart';
 import 'package:another_exam_app/theme/theme.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter/foundation.dart';
 
 class AddCategoryScreen extends StatefulWidget {
   final Category? category;
@@ -48,6 +49,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
             .doc(widget.category!.id)
             .update(updatedCategory.toMap());
 
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Category updated successfully!")),
         );
@@ -63,15 +65,16 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
               ).toMap(),
             );
 
+        if (!mounted) return;
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text("Category added successfully!")));
       }
+      if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
-      print(
-        "Error: $e",
-      ); // Consider using a more robust error handling mechanism
+      // Consider using a more robust error handling mechanism
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("Failed to save category.")));
@@ -104,7 +107,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                       },
                       child: Text(
                         "Discard",
-                        style: TextStyle(color: Colors.redAccent),
+                        style: TextStyle(color: AppTheme.errorColor),
                       ),
                     ),
                   ],
