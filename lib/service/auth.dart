@@ -83,8 +83,8 @@ class AuthService {
   }
 
   // for user log out
-  signOut() async {
-    _auth.signOut();
+  Future<void> signOut() async {
+    await _auth.signOut();
   }
 
   // Claims helpers
