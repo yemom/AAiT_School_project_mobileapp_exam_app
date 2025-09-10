@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -17,8 +16,9 @@ class _AdminSignupFormState extends State<AdminSignupForm> {
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
+  final TextEditingController _nameController = TextEditingController();
   bool _loading = false;
+  bool isPasswordHidden = true;
 
   Future<void> _registerAdmin() async {
     if (_formKey.currentState!.validate()) {
@@ -35,6 +35,7 @@ class _AdminSignupFormState extends State<AdminSignupForm> {
         // Save role in Firestore
         await _firestore.collection("users").doc(userCredential.user!.uid).set({
           "email": _emailController.text.trim(),
+          "name": _nameController.text.trim(),
           "role": "Admin",
           "createdAt": FieldValue.serverTimestamp(),
         });
@@ -60,30 +61,85 @@ class _AdminSignupFormState extends State<AdminSignupForm> {
       appBar: AppBar(title: Text("Register New Admin")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: "Admin Email"),
-                validator: (value) => value!.isEmpty ? "Enter an email" : null,
-              ),
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(labelText: "Password"),
-                obscureText: true,
-                validator:
-                    (value) => value!.length < 6 ? "Min 6 characters" : null,
-              ),
-              SizedBox(height: 20),
-              _loading
-                  ? CircularProgressIndicator()
-                  : ElevatedButton(
-                    onPressed: _registerAdmin,
-                    child: Text("Register Admin"),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.network(
+                  "https://www.shutterstock.com/image-vector/admin-icon-strategy-collection-thin-600nw-2307398667.jpg",
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: "Admin Name",
+                    border: OutlineInputBorder(),
                   ),
-            ],
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Please enter your name";
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(
+                    labelText: "Admin Email",
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Please enter your email";
+                    }
+                    final emailRegex = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
+                    if (!emailRegex.hasMatch(value.trim())) {
+                      return "Please enter a valid email address";
+                    }
+                    return null;
+                  },
+                ),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: "Password",
+                    border: const OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          isPasswordHidden = !isPasswordHidden;
+                        });
+                      },
+                      icon: Icon(
+                        isPasswordHidden
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
+                    ),
+                  ),
+                  obscureText: isPasswordHidden,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Please enter your password";
+                    }
+                    if (value.length < 6) {
+                      return "Password must be at least 6 characters";
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20),
+                _loading
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                      onPressed: _registerAdmin,
+                      child: Center(child: Text("Register Admin")),
+                    ),
+              ],
+            ),
           ),
         ),
       ),
