@@ -1,114 +1,186 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
-import 'package:flutter/foundation.dart';
-import 'package:cloud_functions/cloud_functions.dart';
 
 class AuthService {
-  // Firebase Authentication instance
   final auth.FirebaseAuth _auth = auth.FirebaseAuth.instance;
-  // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // Function to handle user signup
   Future<String?> signup({
     required String name,
     required String email,
     required String password,
-    required String role,
+    required String role, // "User" or "Admin"
   }) async {
     try {
-      // Create user in Firebase Authentication with email and password
-      auth.UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(
-            email: email.trim(),
-            password: password.trim(),
-          );
+      final cred = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      final uid = cred.user?.uid;
+      if (uid == null) return 'firebase_auth/unknown';
 
-      // Save additional user data (name, role) in Firestore
-      await _firestore.collection('users').doc(userCredential.user!.uid).set({
-        'name': name.trim(),
-        'email': email.trim(),
-        'role': role, // Role determines if user is Admin or User
+      // Keep role "User" until approved if Admin requested
+      final initialRole = role.toLowerCase() == 'admin' ? 'User' : 'User';
+
+      await _firestore.collection('users').doc(uid).set({
+        'name': name,
+        'email': email,
+        'role': initialRole,
+        'createdAt': FieldValue.serverTimestamp(),
       });
 
-      return null; // Success: no error message
+      if (role.toLowerCase() == 'admin') {
+        await _firestore.collection('adminRequests').doc(uid).set({
+          'userId': uid,
+          'status': 'pending', // pending | approved | rejected
+          'requestedAt': FieldValue.serverTimestamp(),
+          'approvedAt': null,
+          'approvedBy': null,
+        });
+        return 'Admin'; // UI shows "pending approval"
+      }
+
+      return null; // success
+    } on auth.FirebaseAuthException catch (e) {
+      return 'firebase_auth/${e.code}';
     } catch (e) {
-      return e.toString(); // Error: return the exception message
+      return e.toString();
     }
   }
 
-  // Function to handle user login
   Future<String?> login({
     required String email,
     required String password,
   }) async {
     try {
-      // Sign in the user using Firebase Authentication
-      auth.UserCredential userCredential = await _auth
-          .signInWithEmailAndPassword(
-            email: email.trim(),
-            password: password.trim(),
-          );
+      final cred = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      final uid = cred.user?.uid;
+      if (uid == null) return 'firebase_auth/unknown';
 
-      // Fetch the user's role from Firestore to determine access level
-      DocumentSnapshot userDoc =
-          await _firestore
-              .collection('users')
-              .doc(userCredential.user!.uid)
-              .get();
+      final snap = await _firestore.collection('users').doc(uid).get();
+      final data = snap.data() ?? {};
+      final roleRaw = (data['role'] as String?) ?? 'User';
+      final normalized = roleRaw.trim().toLowerCase().replaceAll(' ', '');
 
-      // Extract role from user document
-      String role =
-          userDoc.data() != null
-              ? (userDoc.data() as Map<String, dynamic>)['role'] ?? 'user'
-              : 'user';
-
-      if (kDebugMode) {
-        print('AuthService - Raw role from Firestore: $role');
-      }
-
-      // Return based on role (handle both lowercase and capitalized versions)
-      if (role == "admin" || role == "Admin") {
-        return "Admin";
-      } else if (role == "super_admin" || role == "Super_Admin") {
-        return "Admin"; // optional: separate SuperAdmin screen
-      } else {
-        return "User";
-      }
+      if (normalized == 'superadmin') return 'SuperAdmin';
+      if (normalized == 'admin') return 'Admin';
+      return 'User';
     } on auth.FirebaseAuthException catch (e) {
-      return e.code; // like 'firebase_auth/wrong-password'
+      return 'firebase_auth/${e.code}';
     } catch (e) {
-      return e.toString(); // Error: return the exception message
+      return e.toString();
     }
   }
 
-  // for user log out
-  Future<void> signOut() async {
-    await _auth.signOut();
-  }
-
-  // Claims helpers
   Future<bool> isSuperAdmin() async {
     final user = _auth.currentUser;
     if (user == null) return false;
-    final idTokenResult = await user.getIdTokenResult(true);
-    final claims = idTokenResult.claims;
-    return claims != null && claims['superAdmin'] == true;
+    try {
+      // Check custom claims first
+      final token = await user.getIdTokenResult(true);
+      final claims = token.claims ?? {};
+      if (claims['superAdmin'] == true) return true;
+
+      // Fallback to Firestore user document
+      final snap = await _firestore.collection('users').doc(user.uid).get();
+      final data = snap.data() ?? {};
+      final role = (data['role'] as String?)?.toLowerCase().replaceAll(' ', '');
+      final flag = (data['isSuperAdmin'] as bool?) ?? false;
+      return flag || role == 'superadmin';
+    } catch (_) {
+      return false;
+    }
   }
 
   Future<bool> isAdmin() async {
     final user = _auth.currentUser;
     if (user == null) return false;
-    final idTokenResult = await user.getIdTokenResult(true);
-    final claims = idTokenResult.claims;
-    return claims != null &&
-        (claims['admin'] == true || claims['superAdmin'] == true);
+    try {
+      final token = await user.getIdTokenResult(true);
+      final claims = token.claims ?? {};
+      if (claims['admin'] == true || claims['superAdmin'] == true) return true;
+
+      final snap = await _firestore.collection('users').doc(user.uid).get();
+      final data = snap.data() ?? {};
+      final role = (data['role'] as String?)?.toLowerCase().replaceAll(' ', '');
+      return role == 'admin' || role == 'superadmin';
+    } catch (_) {
+      return false;
+    }
   }
 
-  // Super-admin only: promote a user to admin via callable function
-  Future<void> promoteUserToAdmin({required String targetUid}) async {
-    final functions = FirebaseFunctions.instanceFor(region: 'us-central1');
-    final callable = functions.httpsCallable('promoteToAdmin');
-    await callable.call(<String, dynamic>{'uid': targetUid});
+  Future<String?> requestSuperAdmin() async {
+    try {
+      final uid = _auth.currentUser?.uid;
+      if (uid == null) return 'Not signed in';
+
+      final reqRef = _firestore.collection('adminRequests').doc(uid);
+      final existing = await reqRef.get();
+      if (existing.exists) {
+        final status = existing.data()?['status'] as String? ?? 'pending';
+        return 'Request already $status';
+      }
+      await reqRef.set({
+        'userId': uid,
+        'status': 'pending',
+        'requestedAt': FieldValue.serverTimestamp(),
+      });
+      return 'Request submitted';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String?> approveAdminRequest({
+    required String userId,
+    required String approvedBy,
+  }) async {
+    try {
+      final reqRef = _firestore.collection('adminRequests').doc(userId);
+      final snap = await reqRef.get();
+      if (!snap.exists) return 'Request not found';
+
+      await reqRef.update({
+        'status': 'approved',
+        'approvedBy': approvedBy,
+        'approvedAt': FieldValue.serverTimestamp(),
+      });
+
+      await _firestore.collection('users').doc(userId).update({
+        'role': 'Admin',
+      });
+      return 'Approved';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String?> rejectAdminRequest({
+    required String userId,
+    required String approvedBy,
+  }) async {
+    try {
+      final reqRef = _firestore.collection('adminRequests').doc(userId);
+      final snap = await reqRef.get();
+      if (!snap.exists) return 'Request not found';
+
+      await reqRef.update({
+        'status': 'rejected',
+        'approvedBy': approvedBy,
+        'approvedAt': FieldValue.serverTimestamp(),
+      });
+
+      await _firestore.collection('users').doc(userId).update({'role': 'User'});
+      return 'Rejected';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<void> signOut() async {
+    await _auth.signOut();
   }
 }

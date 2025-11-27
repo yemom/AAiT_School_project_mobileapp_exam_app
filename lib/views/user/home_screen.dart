@@ -7,6 +7,16 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+Map<String, dynamic> safeDoc(DocumentSnapshot snap) =>
+    (snap.data() as Map<String, dynamic>?) ?? {};
+
+List<Map<String, dynamic>> safeList(dynamic raw) {
+  if (raw is List) {
+    return raw.map((e) => (e as Map<String, dynamic>? ?? {})).toList();
+  }
+  return <Map<String, dynamic>>[];
+}
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -167,7 +177,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               onChanged: (value) => _filterdCategories(value),
                               decoration: InputDecoration(
                                 hintText: "search categories....",
-
                                 suffixIcon:
                                     _searchController.text.isNotEmpty
                                         ? IconButton(

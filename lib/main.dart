@@ -68,11 +68,10 @@ class _AuthGate extends StatelessWidget {
       final Map<String, dynamic>? data = userDoc.data();
       String? rawRole = data?['role'] as String?;
 
-      // Convert raw role to the same format as AuthService (handle both cases)
-      if (rawRole == "admin" ||
-          rawRole == "Admin" ||
-          rawRole == "super_admin" ||
-          rawRole == "Super_Admin") {
+      // Convert raw role to the same format as AuthService (handle variants)
+      final normalized =
+          (rawRole ?? 'User').replaceAll(RegExp(r'[\s-]+'), '_').toLowerCase();
+      if (normalized == "admin" || normalized == "super_admin") {
         return "Admin";
       } else {
         return "User";

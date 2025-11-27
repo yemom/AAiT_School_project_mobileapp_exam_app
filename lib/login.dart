@@ -21,30 +21,25 @@ class _LoginState extends State<Login> {
   bool isPasswordHidden = true;
 
   void _login() async {
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
-    String? result = await _authService.login(
-      email: _emailController.text,
-      password: _passwordController.text,
+    final result = await _authService.login(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
     );
 
     if (!mounted) return;
+    setState(() => _isLoading = false);
 
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (result == 'Admin') {
+    if (result == 'Admin' || result == 'SuperAdmin') {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => AdminHomeScreen()),
+        MaterialPageRoute(builder: (_) => const AdminHomeScreen()),
       );
     } else if (result == 'User') {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
     } else if (result != null &&
         result.contains('firebase_auth/user-not-found')) {

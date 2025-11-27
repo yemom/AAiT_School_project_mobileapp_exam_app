@@ -1,6 +1,8 @@
+import 'dart:async';
+
 import 'package:another_exam_app/service/authenticate.dart';
 import 'package:another_exam_app/theme/theme.dart';
-import 'package:another_exam_app/views/admin/adminSignupForm.dart';
+import 'package:another_exam_app/views/admin/manage_admin_requests.dart';
 import 'package:another_exam_app/views/admin/manage_categories_screen.dart';
 import 'package:another_exam_app/views/admin/manage_exames_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,6 +21,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final app_auth.AuthService _authService = app_auth.AuthService();
   bool _isSuperAdmin = false;
+  int _pendingAdminRequests = 0;
+  StreamSubscription<QuerySnapshot>? _adminRequestSubscription;
 
   // Add size variables with constraints
   late double mediumIconSize;
@@ -49,63 +53,40 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     _checkSuperAdmin();
   }
 
+  @override
+  void dispose() {
+    _adminRequestSubscription?.cancel();
+    super.dispose();
+  }
+
   Future<void> _checkSuperAdmin() async {
     final isSuper = await _authService.isSuperAdmin();
     if (mounted) {
       setState(() {
         _isSuperAdmin = isSuper;
       });
+      if (isSuper) {
+        _listenToPendingRequests();
+      } else {
+        _adminRequestSubscription?.cancel();
+        _pendingAdminRequests = 0;
+      }
     }
   }
 
-  // Removed unused: _showPromoteDialog
-  /*Future<void> _showPromoteDialog() async {
-    final controller = TextEditingController();
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Promote to Admin'),
-          content: TextField(
-            controller: controller,
-            decoration: const InputDecoration(
-              labelText: 'Target User UID',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                final uid = controller.text.trim();
-                if (uid.isEmpty) return;
-                try {
-                  await _authService.promoteUserToAdmin(targetUid: uid);
-                  if (mounted) {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('User promoted to admin')),
-                    );
-                  }
-                } catch (e) {
-                  if (mounted) {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(
-                      context,
-                    ).showSnackBar(SnackBar(content: Text('Failed: $e')));
-                  }
-                }
-              },
-              child: const Text('Promote'),
-            ),
-          ],
-        );
-      },
-    );
-  }*/
+  void _listenToPendingRequests() {
+    _adminRequestSubscription?.cancel();
+    _adminRequestSubscription = _firestore
+        .collection('adminRequests')
+        .where('status', isEqualTo: 'pending')
+        .snapshots()
+        .listen((snapshot) {
+          if (!mounted) return;
+          setState(() {
+            _pendingAdminRequests = snapshot.docs.length;
+          });
+        });
+  }
 
   Future<Map<String, dynamic>> _ftechStatistics() async {
     final categoriesCount =
@@ -208,7 +189,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               Container(
                 padding: EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryColor.withOpacity(0.1),
+                  color: AppTheme.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
@@ -254,7 +235,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             color: AppTheme.textPrimaryColor,
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
-              if (!mounted) return;
+              if (!context.mounted) return;
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const Authenticate()),
@@ -263,20 +244,6 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           ),
         ],
       ),
-      floatingActionButton:
-          _isSuperAdmin
-              ? FloatingActionButton.extended(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => AdminSignupForm()),
-                  );
-                },
-                icon: const Icon(Icons.admin_panel_settings),
-                label: const Text('Register Admin'),
-              )
-              : null,
-
       body: FutureBuilder<Map<String, dynamic>>(
         future: _ftechStatistics(),
         builder: (context, snapshot) {
@@ -477,8 +444,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                     Container(
                                       padding: EdgeInsets.all(8),
                                       decoration: BoxDecoration(
-                                        color: AppTheme.primaryColor
-                                            .withOpacity(0.1),
+                                        color: AppTheme.primaryColor.withValues(
+                                          alpha: 0.1,
+                                        ),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Icon(
@@ -584,6 +552,77 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               ),
                             ],
                           ),
+                          if (_isSuperAdmin) ...[
+                            SizedBox(height: 16),
+                            Card(
+                              child: ListTile(
+                                leading: Icon(
+                                  Icons.admin_panel_settings_outlined,
+                                  color: AppTheme.primaryColor,
+                                  size: mediumIconSize,
+                                ),
+                                title: Text(
+                                  'Manage Admin Requests',
+                                  style: TextStyle(
+                                    fontSize: subtitleFontSize,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.textPrimaryColor,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  _pendingAdminRequests > 0
+                                      ? '$_pendingAdminRequests pending request(s)'
+                                      : 'No pending admin requests',
+                                  style: TextStyle(
+                                    fontSize: bodyFontSize,
+                                    color: AppTheme.textScondaryColor,
+                                  ),
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (_pendingAdminRequests > 0)
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.errorColor.withValues(
+                                            alpha: 0.15,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          '$_pendingAdminRequests',
+                                          style: TextStyle(
+                                            color: AppTheme.errorColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    SizedBox(width: 8),
+                                    Icon(
+                                      Icons.chevron_right,
+                                      color: AppTheme.textScondaryColor,
+                                    ),
+                                  ],
+                                ),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) =>
+                                              const ManageAdminRequestsScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
