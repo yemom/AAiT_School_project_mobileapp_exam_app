@@ -16,16 +16,24 @@ class ManageAdminRequestsScreen extends StatelessWidget {
             FirebaseFirestore.instance
                 .collection('adminRequests')
                 .where('status', isEqualTo: 'pending')
-                .orderBy('requestedAt', descending: true)
                 .snapshots(),
         builder: (context, snap) {
           if (snap.hasError) {
-            return const Center(child: Text('There is no requests'));
+            return Center(child: Text('Error: ${snap.error}'));
           }
           if (!snap.hasData) {
             return const Center(child: CircularProgressIndicator());
           }
-          final docs = snap.data!.docs;
+          final docs =
+              snap.data!.docs..sort((a, b) {
+                final aTime =
+                    (a['requestedAt'] as Timestamp?)?.toDate() ??
+                    DateTime(1970);
+                final bTime =
+                    (b['requestedAt'] as Timestamp?)?.toDate() ??
+                    DateTime(1970);
+                return bTime.compareTo(aTime);
+              });
           if (docs.isEmpty) {
             return const Center(child: Text('No pending requests'));
           }
