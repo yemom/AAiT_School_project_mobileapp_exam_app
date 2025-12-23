@@ -281,7 +281,7 @@ class _AddExamScreenState extends State<AddExamScreen> {
                               )
                               .toList();
                       return DropdownButtonFormField<String>(
-                        value: _selectedCategoryId,
+                        initialValue: _selectedCategoryId,
                         decoration: InputDecoration(
                           fillColor: Colors.white,
                           contentPadding: EdgeInsets.symmetric(vertical: 20),

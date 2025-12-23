@@ -165,7 +165,7 @@ class _ManageExamesScreenState extends State<ManageExamesScreen> {
                 border: const OutlineInputBorder(),
                 hintText: "Category",
               ),
-              value: _selectedCategoryId,
+              initialValue: _selectedCategoryId,
               items: [
                 const DropdownMenuItem(
                   value: null,

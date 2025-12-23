@@ -44,7 +44,9 @@ class _SignupState extends State<Signup> {
     } else if (result == 'Admin') {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Admin request submitted. Waiting for Super Admin approval.'),
+          content: Text(
+            'Admin request submitted. Waiting for Super Admin approval.',
+          ),
           backgroundColor: AppTheme.warningColor,
         ),
       );
@@ -85,26 +87,44 @@ class _SignupState extends State<Signup> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Name', border: OutlineInputBorder()),
-                validator: (v) => (v == null || v.isEmpty) ? 'Enter name' : null,
+                decoration: const InputDecoration(
+                  labelText: 'Name',
+                  border: OutlineInputBorder(),
+                ),
+                validator:
+                    (v) => (v == null || v.isEmpty) ? 'Enter name' : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
-                validator: (v) => (v == null || !v.contains('@')) ? 'Enter valid email' : null,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+                validator:
+                    (v) =>
+                        (v == null || !v.contains('@'))
+                            ? 'Enter valid email'
+                            : null,
               ),
               const SizedBox(height: 12),
               TextFormField(
                 controller: _passwordController,
                 obscureText: true,
-                decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
-                validator: (v) => (v == null || v.length < 6) ? 'Min 6 chars' : null,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+                validator:
+                    (v) => (v == null || v.length < 6) ? 'Min 6 chars' : null,
               ),
               const SizedBox(height: 12),
               DropdownButtonFormField<String>(
-                value: _selectedRole,
-                decoration: const InputDecoration(labelText: 'Role', border: OutlineInputBorder()),
+                initialValue: _selectedRole,
+                decoration: const InputDecoration(
+                  labelText: 'Role',
+                  border: OutlineInputBorder(),
+                ),
                 items: const [
                   DropdownMenuItem(value: 'User', child: Text('User')),
                   DropdownMenuItem(value: 'Admin', child: Text('Admin')),
@@ -114,8 +134,13 @@ class _SignupState extends State<Signup> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _isLoading ? null : _signup,
-                style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor),
-                child: _isLoading ? const CircularProgressIndicator() : const Text('Sign Up'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppTheme.primaryColor,
+                ),
+                child:
+                    _isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text('Sign Up'),
               ),
             ],
           ),
